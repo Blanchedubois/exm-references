@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeff, Clear the Clutter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="jeff-appcards.css">
+<link rel="stylesheet" href="jeff-planner.css">
+<link rel="stylesheet" href="jeff-signup.css">
+<!-- JS-referenced pile images (lifted for standalone bundling) -->
+<meta name="ext-resource-dependency" content="elements/docs/soci-p1.webp" data-resource-id="sociP1" />
+<meta name="ext-resource-dependency" content="elements/docs/qm-p1.webp" data-resource-id="qmP1" />
+<meta name="ext-resource-dependency" content="elements/docs/grover-p1.webp" data-resource-id="groverP1" />
+<meta name="ext-resource-dependency" content="elements/docs/philo-letter.webp" data-resource-id="philoLetter" />
+<meta name="ext-resource-dependency" content="elements/docs/soci-p6.webp" data-resource-id="sociP6" />
+<meta name="ext-resource-dependency" content="elements/docs/qm-p2.webp" data-resource-id="qmP2" />
+<meta name="ext-resource-dependency" content="elements/docs/phys203-hw.webp" data-resource-id="phys203Hw" />
+<meta name="ext-resource-dependency" content="elements/docs/qm-p3.webp" data-resource-id="qmP3" />
+<meta name="ext-resource-dependency" content="elements/docs/grover-p10.webp" data-resource-id="groverP10" />
+<meta name="ext-resource-dependency" content="elements/docs/grover-p2.webp" data-resource-id="groverP2" />
+<meta name="ext-resource-dependency" content="elements/docs/em-c1.webp" data-resource-id="emC1" />
+<meta name="ext-resource-dependency" content="elements/docs/entangle.webp" data-resource-id="entangle" />
+<meta name="ext-resource-dependency" content="elements/docs/em-c3.webp" data-resource-id="emC3" />
+<meta name="ext-resource-dependency" content="elements/docs/em-c2.webp" data-resource-id="emC2" />
+<meta name="ext-resource-dependency" content="elements/docs/prob-density.webp" data-resource-id="probDensity" />
+<meta name="ext-resource-dependency" content="elements/docs/em-c6.webp" data-resource-id="emC6" />
+<meta name="ext-resource-dependency" content="elements/docs/em-c4.webp" data-resource-id="emC4" />
+<meta name="ext-resource-dependency" content="elements/docs/antisym-wave.webp" data-resource-id="antisymWave" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --orange:#ff6a2b;
+  --orange-deep:#e85718;
+  --paper:#fdfcf9; --paper-2:#fbfaf4; --paper-3:#f6f4ea; --sticky:#ffe27a;
+  --ink:#0e0e0c; --ink-2:#2a2a26; --muted:#6b6b64; --muted-2:#a8a79e;
+  --scrib:#22304a; --red:#c8503c; --grid:rgba(64,140,126,.30); --rule:rgba(60,96,150,.32);
+  --line:#e6e4dd; --line-2:#d0cec5; --ok:#3f9d6b;
+  --radius-card:16px;
+  --shadow-card:0 2px 4px rgba(15,15,12,.06), 0 20px 46px -18px rgba(15,15,12,.34);
+  --shadow-card-hover:0 4px 10px rgba(15,15,12,.10), 0 30px 60px -20px rgba(15,15,12,.5);
+  --f-display:"Space Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --f-script:"Fraunces","Georgia",serif;
+  --f-hand:"Caveat",cursive;
+  --f-mono:"Geist Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; overflow:hidden; overscroll-behavior-y:none; background:var(--orange); }
+html.unlocked{ overflow-y:auto; overflow-x:hidden; overscroll-behavior-y:none; }
+html,body{margin:0}
+body{
+  font-family:var(--f-display); color:var(--ink);
+  background:var(--orange);
+  overflow-x:clip;
+  background-image:
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,.10), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(120,40,6,.16) 0 1.5px, transparent 1.5px 42px),
+    repeating-linear-gradient(90deg, rgba(120,40,6,.16) 0 1.5px, transparent 1.5px 42px);
+  background-size:auto, 42px 42px, 42px 42px;
+  -webkit-font-smoothing:antialiased;
+}
+/* edge vignette now lives on .landing (below), so Section 2 stays clean */
+
+.clutter-clip{ position:absolute; left:0; top:0; width:100%; height:calc(100% + var(--spill,210px));
+  overflow-x:clip; overflow-y:visible; z-index:2; pointer-events:none; }
+/* transparent catcher: takes the single “click to clear”, then removes itself */
+.catcher{ position:fixed; inset:0; z-index:30; cursor:pointer; }
+body.cleared .catcher{ display:none; }
+/* scroll unlocks only after the desk is cleared (see html.unlocked) */
+main{ position:relative; }
+.icon{ font-family:'Material Symbols Outlined'; font-weight:normal; font-style:normal; line-height:1;
+  display:inline-block; white-space:nowrap; -webkit-font-smoothing:antialiased; }
+
+/* ---------------- brand mark, top-left ---------------- */
+.mark{ position:fixed; left:34px; top:28px; z-index:45; display:flex; align-items:center; gap:11px;
+  color:#fff; font-weight:600; font-size:20px; letter-spacing:-.01em;
+  text-shadow:0 2px 10px rgba(120,40,6,.4); pointer-events:none; transition:opacity .4s ease; }
+/* fade the floating site mark once Section 3's framed app (with its own JEFF banner) is in view */
+body.at-workspace .mark{ opacity:0; }
+.donut{ width:26px; height:26px; border-radius:50%; background:#fff; position:relative; }
+.donut::after{ content:""; position:absolute; inset:8px; border-radius:50%; background:var(--orange); }
+
+/* ---------------- the clutter ---------------- */
+.clutter{ position:absolute; inset:0; }
+.slot{ position:absolute; will-change:transform;
+  transition:transform 1.05s cubic-bezier(.22,.61,.25,1); }
+.paper{ position:relative; background:var(--paper);
+  box-shadow:0 1px 1px rgba(60,30,4,.14), 0 16px 30px -14px rgba(70,34,6,.5);
+  border-radius:3px; overflow:hidden;
+  animation:float var(--dur,7s) ease-in-out var(--del,0s) infinite; }
+@keyframes float{
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-6px) rotate(.6deg); }
+}
+.grain{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.85 0 0 0 0 0.82 0 0 0 0 0.74 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+.docimg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center top; display:block; user-select:none; -webkit-user-drag:none; }
+
+/* internal paper parts */
+.pad{ position:absolute; inset:0; padding:14px 15px; }
+.rule{ position:absolute; inset:0;
+  background-image:repeating-linear-gradient(0deg, transparent 0 25px, var(--rule) 25px 26px);
+  background-position:0 34px; }
+.gridbg{ position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 15px, var(--grid) 15px 15.8px),
+    repeating-linear-gradient(90deg, transparent 0 15px, var(--grid) 15px 15.8px); }
+.margin{ position:absolute; top:0; bottom:0; left:32px; width:1.5px; background:rgba(200,80,60,.5); }
+.holes{ position:absolute; left:9px; top:0; bottom:0; width:10px; display:flex; flex-direction:column;
+  justify-content:space-around; padding:26px 0; }
+.holes i{ width:10px; height:10px; border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #d9d5c8, #efece2); box-shadow:inset 0 1px 1px rgba(0,0,0,.15); }
+
+/* faux printed text = thin bars */
+.pline{ height:4px; border-radius:2px; background:#cdcabf; margin:9px 0; }
+.pline.s{ background:#d8d5cb; }
+/* handwriting = wavy strokes */
+.sq{ display:block; width:100%; height:9px; margin:10px 0; overflow:visible; }
+.sq path{ fill:none; stroke:var(--scrib); stroke-width:1.5; stroke-linecap:round; opacity:.8; }
+/* real handwriting */
+.hand{ font-family:var(--f-hand); color:var(--scrib); line-height:1.15; }
+.fine{ font-family:var(--f-mono); color:var(--muted); letter-spacing:.02em; }
+.tag-corner{ position:absolute; right:-1px; top:14px; background:var(--orange); color:#fff;
+  font-family:var(--f-mono); font-size:9px; padding:3px 7px 3px 8px; border-radius:4px 0 0 4px;
+  letter-spacing:.06em; }
+.coffee{ position:absolute; width:78px; height:78px; border-radius:50%;
+  border:6px solid rgba(120,72,28,.16); box-shadow:inset 0 0 0 3px rgba(120,72,28,.05); }
+.star{ position:absolute; font-family:var(--f-hand); color:var(--red); font-size:26px; transform:rotate(-12deg); }
+.fold{ position:absolute; right:0; top:0; width:0; height:0;
+  border-style:solid; border-width:0 22px 22px 0; border-color:transparent rgba(0,0,0,.10) transparent transparent; }
+.clip{ position:absolute; width:11px; height:34px; border:2.5px solid #9aa3ad; border-radius:6px;
+  box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.check{ display:inline-block; width:11px; height:11px; border:1.6px solid var(--scrib); border-radius:2px;
+  margin-right:7px; vertical-align:-1px; }
+
+/* ---------------- centre content ---------------- */
+.landing{ position:relative; z-index:2; min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; scroll-snap-align:start; }
+.landing::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
+  box-shadow:inset 0 0 220px 40px rgba(120,40,6,.28);
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 20%, #000 55%, transparent 88%);
+  mask-image:linear-gradient(to bottom, transparent 0, #000 20%, #000 55%, transparent 88%); }
+.center{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:26px; pointer-events:none; }
+
+.card{ background:var(--paper); border-radius:22px; width:min(620px,92vw); padding:46px 52px 44px;
+  text-align:center; position:relative;
+  box-shadow:0 4px 8px rgba(70,34,6,.14), 0 40px 90px -26px rgba(70,34,6,.6);
+  opacity:1; transform:none;
+  pointer-events:auto; }
+.card .tape{ position:absolute; top:-16px; left:50%; transform:translateX(-50%) rotate(-2deg);
+  width:118px; height:30px; background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.05);
+  box-shadow:0 2px 5px rgba(70,34,6,.18); }
+.card .cbrand{ display:inline-flex; align-items:center; gap:10px; font-weight:600; font-size:17px; }
+.card .cbrand .donut{ width:22px; height:22px; }
+.card .cbrand .donut::after{ inset:7px; background:var(--paper); }
+.card .eyebrow{ font-family:var(--f-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted); margin:18px 0 14px; }
+.card h1{ margin:0; font-family:var(--f-hand); font-size:clamp(42px,6.4vw,72px); line-height:1; letter-spacing:0; font-weight:600; }
+.card h1 em{ font-family:var(--f-hand); font-style:normal; font-weight:700; color:var(--orange); }
+.card .sub{ margin:20px auto 0; max-width:40ch; color:var(--muted); font-size:16px; line-height:1.55; }
+.card .scr{ position:absolute; right:26px; bottom:14px; font-family:var(--f-hand); color:var(--muted-2);
+  font-size:17px; transform:rotate(-4deg); }
+
+.welcome{ text-align:center; opacity:0; transform:translateY(22px); transition:opacity .7s ease .22s, transform .8s cubic-bezier(.2,.7,.2,1) .22s; }
+.welcome h2{ margin:0; color:#fff; font-size:clamp(34px,5.4vw,60px); letter-spacing:-.03em; font-weight:700;
+  text-shadow:0 3px 18px rgba(120,40,6,.45); }
+.welcome h2 em{ font-family:var(--f-script); font-style:italic; font-weight:500; }
+.welcome .cta{ display:flex; gap:14px; justify-content:center; align-items:center; margin-top:22px; pointer-events:auto; flex-wrap:wrap; }
+.btn{ display:inline-flex; align-items:center; gap:9px; height:50px; padding:0 26px; border-radius:999px;
+  font-family:var(--f-display); font-size:16px; font-weight:600; cursor:pointer; border:1.5px solid transparent;
+  transition:transform .15s ease, box-shadow .15s ease; }
+.btn-primary{ background:#fff; color:var(--orange-deep); box-shadow:0 10px 26px -10px rgba(70,34,6,.6); }
+.btn-primary:hover{ transform:translateY(-2px); }
+.btn-ghost{ background:transparent; color:#fff; border-color:rgba(255,255,255,.6); }
+.btn-ghost:hover{ transform:translateY(-2px); border-color:#fff; }
+.welcome .note{ margin-top:16px; font-family:var(--f-mono); font-size:12px; letter-spacing:.06em; color:rgba(255,255,255,.82); }
+
+/* hint */
+.hint{ position:fixed; left:50%; bottom:46px; transform:translateX(-50%); z-index:35; text-align:center;
+  transition:opacity .4s ease; }
+.hint .h1{ font-family:var(--f-hand); font-size:28px; color:#fff; font-weight:600; transform:rotate(-2deg);
+  text-shadow:0 2px 10px rgba(120,40,6,.4); }
+.hint .h1 .arw{ display:inline-block; margin-left:6px; animation:nudge 1.3s ease-in-out infinite; }
+@keyframes nudge{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
+.hint .h2{ font-family:var(--f-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(255,255,255,.8); margin-top:6px; }
+
+/* replay */
+.replay{ position:fixed; right:26px; bottom:24px; z-index:46; display:none; align-items:center; gap:8px;
+  pointer-events:auto;
+  height:40px; padding:0 16px; border-radius:999px; border:1.5px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.12); color:#fff; font-family:var(--f-mono); font-size:12px; letter-spacing:.06em;
+  cursor:pointer; backdrop-filter:blur(6px); }
+.replay:hover{ background:rgba(255,255,255,.22); }
+
+/* ---------------- beta CTA (replaces hero buttons) ---------------- */
+.welcome .beta{ margin-top:24px; display:inline-flex; flex-direction:column; align-items:center; gap:8px;
+  pointer-events:auto; cursor:pointer; color:#fff; text-decoration:none; }
+.welcome .beta-label{ font-family:var(--f-display); font-size:18px; font-weight:600; letter-spacing:.01em;
+  padding:12px 28px; border-radius:999px; border:1.5px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.10); backdrop-filter:blur(4px);
+  transition:background .16s, color .16s, transform .16s, border-color .16s; }
+.welcome .beta:hover .beta-label{ background:#fff; color:var(--orange-deep); border-color:#fff; transform:translateY(-2px); }
+.welcome .beta-chev{ font-size:32px; color:#fff; animation:bob 1.5s ease-in-out infinite; }
+@keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+/* ================= SECTION 2 · ANY COURSE ================= */
+.courses{ min-height:100vh; position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center;
+  padding:clamp(600px,60vh,760px) 24px clamp(80px,12vh,150px); overflow:hidden;
+  background-color:var(--c,#ff6a2b);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px);
+  background-size:44px 44px; transition:background-color .8s ease; }
+.courses::before{ content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(circle at 50% 28%, rgba(255,255,255,.14), transparent 62%);
+  box-shadow:inset 0 0 200px 30px rgba(20,12,4,.16);
+  -webkit-mask:linear-gradient(to bottom, #000 0, #000 calc(100% - 380px), transparent);
+          mask:linear-gradient(to bottom, #000 0, #000 calc(100% - 380px), transparent); }
+/* torn orange fringe: the landing colour tears into the section so the seam is never a straight line */
+.courses::after{ content:""; position:absolute; top:-1px; left:0; right:0; height:54px; z-index:1; pointer-events:none;
+  background:var(--orange);
+  background-image:repeating-linear-gradient(90deg, rgba(120,40,6,.16) 0 1.5px, transparent 1.5px 42px);
+  clip-path:polygon(0 0,100% 0,100% 16px,96% 44px,92% 11px,88% 34px,84% 8px,80% 30px,76% 15px,72% 42px,68% 10px,64% 33px,60% 18px,56% 44px,52% 9px,48% 30px,44% 14px,40% 40px,36% 11px,32% 33px,28% 17px,24% 43px,20% 12px,16% 34px,12% 16px,8% 41px,4% 10px,0 22px); }
+.course-wm{ position:absolute; left:50%; top:62%; transform:translate(-50%,-50%);
+  font-size:min(76vh,82vw); color:rgba(255,255,255,.12); pointer-events:none;
+  transition:opacity .32s ease; user-select:none; z-index:1; }
+.course-wm.swap{ opacity:0; }
+.courses-inner{ position:relative; z-index:2; text-align:center; color:#fff; max-width:min(980px,90vw); scroll-margin-top:44px; }
+.c-eyebrow{ display:inline-flex; align-items:center; gap:12px; font-family:var(--f-mono); font-size:13px;
+  letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.9); margin-bottom:26px; }
+.c-eyebrow::before,.c-eyebrow::after{ content:""; width:26px; height:1px; background:rgba(255,255,255,.55); }
+.learn{ margin:0; font-family:var(--f-display); font-weight:600; letter-spacing:-.02em;
+  font-size:clamp(34px,5.6vw,64px); line-height:1.08; text-wrap:balance; }
+.learn .anything{ font-family:var(--f-script); font-style:italic; font-weight:600;
+  text-decoration:underline; text-decoration-style:wavy; text-decoration-thickness:2px;
+  text-underline-offset:8px; text-decoration-color:rgba(255,255,255,.6); }
+
+/* search-field affordance, signals you can type ANY course, not pick from a menu */
+.searchfield{ display:inline-flex; align-items:center; gap:12px; margin-top:22px; max-width:100%;
+  background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.5); border-radius:16px;
+  padding:13px 18px; backdrop-filter:blur(4px); box-shadow:0 12px 34px -18px rgba(70,34,6,.6); }
+.searchfield .s-icon{ font-size:25px; color:rgba(255,255,255,.85); flex:none; }
+.searchfield .subject{ font-family:var(--f-mono); font-weight:500; color:#fff; white-space:nowrap;
+  font-size:clamp(22px,2.8vw,34px); letter-spacing:-.01em; }
+.searchfield .caret{ width:2.5px; height:2em; background:#fff; border-radius:2px; flex:none;
+  animation:caretblink 1.05s steps(1) infinite; }
+@keyframes caretblink{ 50%{ opacity:0; } }
+.searchfield .code-tag{ margin:0 0 0 4px; }
+
+.suggest{ display:flex; align-items:center; gap:12px; margin-top:26px; flex-wrap:wrap; }
+.suggest-lead{ font-family:var(--f-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(255,255,255,.7); flex:none; }
+.suggest .rail{ margin:0; }
+.rail .chip.ghost{ border-style:dashed; opacity:.72; cursor:default; }
+.rail .chip.ghost:hover{ transform:none; }
+.code-tag{ display:inline-block; margin-top:22px; font-family:var(--f-mono); font-size:12px; letter-spacing:.12em;
+  color:#fff; border:1px solid rgba(255,255,255,.5); border-radius:999px; padding:5px 14px;
+  background:rgba(255,255,255,.10); }
+.blurb{ margin:28px auto 0; max-width:56ch; font-size:clamp(16px,1.7vw,19px); line-height:1.62;
+  color:rgba(255,255,255,.92); text-wrap:pretty; }
+.blurb strong{ font-weight:700; color:#fff; }
+.blurb em{ font-style:italic; }
+.rail{ display:flex; gap:10px; justify-content:center; align-items:center; margin-top:34px; flex-wrap:wrap; }
+.rail .chip{ display:inline-flex; align-items:center; gap:9px; height:44px; padding:0 17px 0 13px; border-radius:999px;
+  border:1.5px solid rgba(255,255,255,.45); color:#fff; opacity:.82; font-size:14.5px; font-weight:500; cursor:pointer;
+  transition:background .3s, color .3s, opacity .3s, transform .3s, border-color .3s; white-space:nowrap; }
+.rail .chip .icon{ font-size:21px; }
+.rail .chip.on{ background:#fff; color:var(--c,#ff6a2b); border-color:#fff; opacity:1; transform:translateY(-2px) scale(1.04); }
+.railnav{ display:inline-flex; gap:18px; justify-content:center; align-items:center; margin-top:18px; }
+.railnav .rnav{ width:42px; height:42px; border-radius:50%; border:1.5px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.10); color:#fff; font-size:20px; line-height:1; cursor:pointer;
+  display:grid; place-items:center; transition:background .15s, transform .15s, border-color .15s; }
+.railnav .rnav:hover{ background:rgba(255,255,255,.24); border-color:#fff; transform:translateY(-1px); }
+.railnav .rlabel{ font-family:var(--f-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.82); }
+.aside{ display:inline-block; margin-top:26px; font-family:var(--f-hand); font-size:22px;
+  color:rgba(255,255,255,.9); transform:rotate(-2.5deg); }
+
+/* ---- Section 2 study-card showcase (app card system, themed by --accent) ---- */
+.cardstack{ display:flex; justify-content:center; align-items:flex-start; gap:16px; flex-wrap:wrap;
+  margin:34px auto 6px; max-width:820px; transition:opacity .35s ease; }
+
+/* ---- desktop: copy on the left, card pile held to the right ---- */
+@media (min-width:900px){
+  .courses-inner{ display:grid; grid-template-columns:minmax(0,1fr) 420px;
+    gap:clamp(28px,3vw,48px); align-items:center; text-align:left; }
+  .course-copy{ min-width:0; }
+  .courses-inner .c-eyebrow{ margin-bottom:16px; }
+  .courses-inner .learn{ line-height:1.02; }
+  .courses-inner .searchfield{ margin-top:18px; }
+  .courses-inner .code-tag{ margin-top:0; }
+  .courses-inner .blurb{ margin:18px 0 0; max-width:42ch; }
+  .courses-inner .suggest{ justify-content:flex-start; margin-top:24px; }
+  .courses-inner .suggest .rail{ justify-content:flex-start; }
+  .cardstack{ margin:0; display:block; max-width:none; padding:10px 0 10px 18px; }
+  .cardstack .scard{ width:306px; min-height:190px; padding:42px 18px 0; }
+  .cardstack .sc-term{ font-size:21px; }
+  .cardstack .sc-def,.cardstack .sc-q{ font-size:15px; }
+  .cardstack .sc-formula{ font-size:22px; padding:20px 0 10px; }
+  .cardstack .scard::after{ font-size:140px; }
+  .scard:nth-child(1){ box-shadow:var(--shadow-card-hover); }
+}
+.cardstack.swap{ opacity:0; }
+.scard{ position:relative; width:244px; min-height:152px; overflow:hidden; text-align:left;
+  background:var(--paper); border:1.5px solid var(--accent,#ff6a2b); border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card); padding:38px 15px 0; color:var(--ink-2);
+  display:flex; flex-direction:column; }
+.scard:nth-child(1){ transform:rotate(-2.4deg); }
+.scard:nth-child(2){ transform:rotate(1.3deg) translateY(-7px); }
+.scard:nth-child(3){ transform:rotate(-1deg) translateY(4px); }
+.scard::before{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--accent) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--accent) 10%, transparent) 1px, transparent 1px);
+  background-size:30px 30px; }
+.scard::after{ position:absolute; right:6px; top:50%; transform:translateY(-50%) rotate(-13deg);
+  content:attr(data-wm); font-family:var(--f-script); font-style:italic; font-weight:600; line-height:1;
+  font-size:118px; color:var(--accent); opacity:.12; pointer-events:none; z-index:0; white-space:nowrap; }
+.scard > *{ position:relative; z-index:1; }
+.scard-label{ position:absolute; top:13px; left:13px; display:inline-flex; align-items:center; gap:6px;
+  border:1px solid color-mix(in oklab, var(--accent) 55%, var(--line)); border-radius:999px; padding:4px 10px 4px 9px;
+  font-family:var(--f-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); background:var(--paper); }
+.scard-label::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--accent); }
+.scard-num{ position:absolute; top:14px; right:15px; font-family:var(--f-display); font-weight:600; font-size:16px;
+  color:var(--accent); font-variant-numeric:tabular-nums; }
+.scard-body{ flex:1; }
+.sc-term{ font-size:19px; font-weight:600; color:var(--ink); letter-spacing:-.01em; margin-bottom:5px; }
+.sc-def{ font-size:13px; line-height:1.5; color:var(--muted); }
+.sc-q{ font-size:14.5px; line-height:1.5; color:var(--ink-2); }
+.sc-q b{ color:var(--ink); font-weight:600; }
+.sc-formula{ font-family:var(--f-mono); font-size:19px; color:var(--ink); text-align:center; padding:16px 0 8px; letter-spacing:.02em; }
+.sc-kpoint{ display:flex; gap:10px; align-items:flex-start; }
+.sc-kpoint .kn{ flex:none; width:24px; height:24px; border-radius:7px; display:grid; place-items:center;
+  background:color-mix(in oklab, var(--accent) 14%, var(--paper)); color:var(--accent);
+  font-family:var(--f-mono); font-size:12px; font-weight:600; border:1px solid color-mix(in oklab,var(--accent) 30%, transparent); }
+.sc-kpoint p{ margin:0; font-size:14px; line-height:1.5; color:var(--ink-2); }
+.scard-foot{ margin:14px -15px 0; padding:9px 15px 11px; border-top:1px solid color-mix(in oklab, var(--line) 55%, var(--accent));
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  font-family:var(--f-mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted-2); }
+.scard-foot .kind{ font-family:var(--f-display); text-transform:none; letter-spacing:0; font-size:11px; font-weight:500; color:var(--accent); }
+@media (max-width:899px){
+  .courses{ padding:clamp(450px,62vh,600px) 20px clamp(44px,7vh,90px); }
+  .courses-inner{ max-width:min(430px,92vw); }
+  .c-eyebrow{ margin-bottom:14px; }
+  .learn{ font-size:clamp(30px,8vw,46px); line-height:1.05; }
+  .searchfield{ margin-top:16px; padding:11px 15px; gap:9px; }
+  .searchfield .subject{ font-size:clamp(19px,5.4vw,26px); }
+  .searchfield .s-icon{ font-size:21px; }
+  .blurb{ margin:16px auto 0; max-width:34ch; font-size:15px; line-height:1.55; }
+  .cardstack{ display:block; width:272px; margin:22px auto 4px; max-width:none; }
+  .cardstack .scard{ width:272px; min-height:148px; margin:0 auto; }
+  .scard:nth-child(1){ box-shadow:var(--shadow-card-hover); }
+  .suggest{ justify-content:center; margin-top:18px; }
+  .rail{ margin-top:0; gap:8px; }
+  .rail .chip{ height:38px; font-size:13px; padding:0 14px 0 11px; }
+  .rail .chip .icon{ font-size:18px; }
+}
+
+/* per-render randomized pile: JS sets --cr/--cx/--cm on each card so every
+   subject's stack varies in horizontal position and spacing.
+   Idle waver (--ir/--iy) and cursor parallax (--px/--py/--pr) composite on top. */
+.cardstack .scard{
+  transform:
+    translate(var(--px,0px), calc(var(--py,0px) + var(--iy,0px)))
+    rotate(calc(var(--cr,0deg) + var(--ir,0deg) + var(--pr,0deg)))
+    translateX(var(--cx,0px));
+  margin-top:var(--cm,0px); will-change:transform; }
+.code-num{ font-variant-numeric:tabular-nums; }
+
+/* state flags */
+body.cleared .hint{ opacity:0; pointer-events:none; }
+body.cleared .replay{ display:inline-flex; }
+body.welcomed .welcome{ opacity:1; transform:translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  .paper{ animation:none; }
+  .slot{ transition:transform .5s ease; }
+}
+
+/* ================= SECTION 3 · THE TRAIL v2 (overlap + explainer) =================
+   Meandering road-map over the frozen colour + grid. Each station now has the tool
+   EXPLAINER text on one side, a pile of BIGGER, slightly-overlapping demo cards on the
+   other, and a large faint tool-icon watermark behind it. Road weaves the centre gutter.
+   Demo cards vs .is-appref app placeholders unchanged. Accordion kept as index (accordion). */
+.workspace{ position:relative; z-index:1; overflow:hidden;
+  padding:clamp(70px,9vh,130px) 24px clamp(90px,12vh,160px);
+  background-color:var(--course-c,#ff6a2b); transition:background-color .8s ease;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px);
+  background-size:44px 44px; }
+.workspace::after{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  box-shadow:inset 0 0 250px 50px rgba(20,12,4,.20);
+  -webkit-mask:linear-gradient(to bottom, transparent 0, #000 380px, #000 calc(100% - 380px), transparent);
+          mask:linear-gradient(to bottom, transparent 0, #000 380px, #000 calc(100% - 380px), transparent); }
+
+.trail-head{ position:relative; z-index:3; text-align:center; color:#fff; max-width:min(760px,92vw);
+  margin:0 auto clamp(26px,4.5vh,60px); }
+.trail-head .c-eyebrow{ margin-bottom:0; }
+.ws-title{ margin:12px 0 0; font-family:var(--f-display); font-weight:600; letter-spacing:-.025em;
+  font-size:clamp(33px,5vw,58px); line-height:1.02; text-shadow:0 3px 20px rgba(20,12,4,.3); }
+.ws-title em{ font-family:var(--f-script); font-style:italic; font-weight:600; }
+.ws-sub{ margin:14px auto 0; max-width:52ch; font-size:clamp(14px,1.5vw,17px); line-height:1.58;
+  color:rgba(255,255,255,.92); text-wrap:pretty; }
+.ws-sub b{ color:#fff; font-weight:700; }
+
+.ws-scrib{ position:absolute; z-index:4; font-family:var(--f-hand); color:rgba(255,255,255,.9);
+  font-size:22px; line-height:1.12; pointer-events:none; text-shadow:0 2px 10px rgba(20,12,4,.34); }
+.ws-scrib .sm{ font-family:var(--f-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,255,255,.7); display:block; margin-top:3px; }
+.ws-scrib.s1{ left:3%; top:11%; transform:rotate(-6deg); }
+.ws-scrib.s2{ right:3%; top:53%; transform:rotate(5deg); text-align:right; }
+@media (max-width:1280px){ .ws-scrib{ display:none; } }
+
+.trail-wrap{ position:relative; z-index:2; width:min(1200px,94vw); margin:0 auto; }
+.trail-svg{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:visible; }
+.trail-shoulder{ fill:none; stroke:rgba(255,255,255,.16); stroke-width:16; stroke-linecap:round; stroke-linejoin:round; }
+.trail-road{ fill:none; stroke:rgba(255,255,255,.74); stroke-width:3; stroke-linecap:round; stroke-dasharray:1 15; }
+.trail-mid{ fill:none; stroke:rgba(255,255,255,.28); stroke-width:1.4; stroke-linecap:round; stroke-dasharray:14 14; }
+
+/* ---- stations ---- */
+.station{ position:relative; z-index:1; min-height:440px; display:grid; align-items:center;
+  column-gap:clamp(10px,1.5vw,26px); padding:clamp(46px,7vh,110px) 0; }
+/* 3 columns: content · road gutter · content, the road can never touch the text */
+.station.st-right{ grid-template-columns:minmax(0,.88fr) clamp(90px,10vw,150px) minmax(0,1.12fr); }
+.station.st-left{  grid-template-columns:minmax(0,1.12fr) clamp(90px,10vw,150px) minmax(0,.88fr); }
+
+/* big tool watermark behind the whole station, tilted, not vertical */
+.st-wm{ position:absolute; z-index:0; top:50%; font-family:'Material Symbols Outlined';
+  font-size:clamp(210px,26vw,370px); line-height:1; color:#fff; opacity:.15; pointer-events:none; user-select:none; }
+.st-right .st-wm{ left:-3%; transform:translateY(-50%) rotate(-13deg); }
+.st-left  .st-wm{ right:-3%; transform:translateY(-50%) rotate(12deg); }
+
+/* map-pin node, hugs the text side and flips its point toward the text */
+.node{ position:relative; z-index:4; grid-column:2; grid-row:1; align-self:center;
+  display:flex; flex-direction:column; align-items:center; gap:8px; }
+.st-right .node{ justify-self:start; }
+.st-left  .node{ justify-self:end; }
+.node-num{ font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; color:#fff; opacity:.9; }
+.node-pin{ width:58px; height:58px; border-radius:50% 50% 50% 4px; transform:rotate(45deg);
+  background:#fff; border:2px solid color-mix(in oklab, var(--course-c) 30%, #fff);
+  box-shadow:0 12px 26px -10px rgba(20,12,4,.65); display:grid; place-items:center;
+  transition:transform .3s ease, box-shadow .3s ease, background-color .3s ease; }
+.node-pin .ai-icon{ font-family:'Material Symbols Outlined'; transform:rotate(-45deg); font-size:28px;
+  color:var(--course-c); transition:color .8s ease; }
+/* flip the teardrop to point at the text */
+.st-right .node-pin{ border-radius:50% 50% 50% 4px; transform:rotate(-45deg); }
+.st-right .node-pin .ai-icon{ transform:rotate(45deg); }
+.st-left  .node-pin{ border-radius:50% 50% 4px 50%; transform:rotate(45deg); }
+.st-left  .node-pin .ai-icon{ transform:rotate(-45deg); }
+.node.on .node-pin{ background:var(--course-c); box-shadow:0 16px 30px -10px rgba(20,12,4,.7), 0 0 0 6px rgba(255,255,255,.25); }
+.node.on .node-pin .ai-icon{ color:#fff; }
+
+/* explainer text (opposing side) */
+.st-text{ position:relative; z-index:2; grid-row:1; align-self:center; color:#fff; max-width:min(430px,96%); }
+.st-right .st-text{ grid-column:1; justify-self:end; text-align:right; }
+.st-left  .st-text{ grid-column:3; justify-self:start; text-align:left; }
+.st-kicker{ display:inline-flex; align-items:center; gap:9px; font-family:var(--f-mono); font-size:11px;
+  font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.9); }
+.st-kicker::before{ content:""; width:18px; height:1.5px; background:currentColor; opacity:.6; }
+.st-right .st-kicker{ flex-direction:row-reverse; }
+.st-title{ margin:14px 0 0; font-family:var(--f-display); font-weight:600; letter-spacing:-.022em;
+  font-size:clamp(28px,3.4vw,46px); line-height:1.03; color:#fff; text-shadow:0 2px 16px rgba(20,12,4,.32); }
+.st-title em{ font-family:var(--f-script); font-style:italic; font-weight:600; }
+.st-desc{ margin:16px 0 0; font-size:clamp(14px,1.15vw,16px); line-height:1.62; color:rgba(255,255,255,.9); text-wrap:pretty; }
+.st-right .st-desc{ margin-left:auto; }
+.st-feats{ list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:9px; }
+.st-right .st-feats{ align-items:flex-end; }
+.st-left  .st-feats{ align-items:flex-start; }
+.st-feats li{ display:inline-flex; align-items:center; gap:9px; font-family:var(--f-mono); font-size:10.5px;
+  letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.86); }
+.st-right .st-feats li{ flex-direction:row-reverse; }
+.st-feats .ai-icon{ font-family:'Material Symbols Outlined'; font-size:16px; color:#fff;
+  width:26px; height:26px; display:grid; place-items:center; border-radius:8px;
+  background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); }
+
+/* ---- overlapping card pile ---- */
+.st-cluster{ position:relative; z-index:1; grid-row:1; display:flex; flex-direction:column; width:100%; }
+.st-right .st-cluster{ grid-column:3; align-items:flex-start; padding-left:clamp(6px,1vw,20px); }
+.st-left  .st-cluster{ grid-column:1; align-items:flex-end;   padding-right:clamp(6px,1vw,20px); }
+.st-cluster > *{ margin-top:-30px; position:relative;
+  transform:translateX(var(--tx,0px)) translateY(var(--ty,0px)) rotate(var(--rot,0deg));
+  transition:transform .35s cubic-bezier(.2,.7,.2,1), z-index 0s linear .35s; will-change:transform; }
+.st-cluster > *:first-child{ margin-top:0; }
+.st-cluster > :nth-child(1){ z-index:1; } .st-cluster > :nth-child(2){ z-index:2; }
+.st-cluster > :nth-child(3){ z-index:3; } .st-cluster > :nth-child(4){ z-index:4; }
+.st-cluster > :nth-child(5){ z-index:5; } .st-cluster > :nth-child(6){ z-index:6; }
+/* fan the pile horizontally, away from the road */
+.st-right .st-cluster > :nth-child(1){ --tx:0px;   --rot:-1.6deg; }
+.st-right .st-cluster > :nth-child(2){ --tx:44px;  --rot:1.4deg; }
+.st-right .st-cluster > :nth-child(3){ --tx:88px;  --rot:3deg; }
+.st-right .st-cluster > :nth-child(4){ --tx:132px; --rot:4.4deg; }
+.st-left .st-cluster > :nth-child(1){ --tx:0px;    --rot:1.6deg; }
+.st-left .st-cluster > :nth-child(2){ --tx:-44px;  --rot:-1.4deg; }
+.st-left .st-cluster > :nth-child(3){ --tx:-88px;  --rot:-3deg; }
+.st-left .st-cluster > :nth-child(4){ --tx:-132px; --rot:-4.4deg; }
+.st-cluster > :hover{ --ty:-10px; z-index:30;
+  transition:transform .35s cubic-bezier(.2,.7,.2,1), z-index 0s; }
+
+/* ---- base demo card (bigger) ---- */
+.dcard{ position:relative; overflow:hidden; background:var(--paper); color:var(--ink-2);
+  border:1.5px solid color-mix(in oklab, var(--course-c) 24%, var(--line)); border-radius:18px;
+  box-shadow:var(--shadow-card); padding:18px 18px 16px; width:min(320px,86%);
+  transition:transform .32s cubic-bezier(.2,.7,.2,1), box-shadow .32s ease; }
+.st-cluster > .dcard:hover{ box-shadow:var(--shadow-card-hover); }
+.st-cluster > .fc:hover .fc-face{ box-shadow:var(--shadow-card-hover); }
+.dcard::before{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--course-c) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--course-c) 8%, transparent) 1px, transparent 1px);
+  background-size:26px 26px; }
+.dcard > *{ position:relative; z-index:1; }
+.dc-wm{ position:absolute; z-index:0; right:-12px; bottom:-18px; font-family:'Material Symbols Outlined';
+  font-size:120px; line-height:1; color:var(--course-c); opacity:.13; pointer-events:none; transition:color .8s ease; }
+.dc-lbl{ display:inline-flex; align-items:center; gap:6px; font-family:var(--f-mono); font-size:9px;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--course-c); transition:color .8s ease; }
+.dc-lbl::before{ content:""; width:5px; height:5px; border-radius:50%; background:var(--course-c); }
+
+/* Learning · flashcard (flip) */
+.fc{ perspective:1000px; background:transparent; border:0; box-shadow:none; padding:0; height:196px; width:min(320px,86%); overflow:visible; }
+.fc-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.7,.2,1); }
+.fc.flipped .fc-inner{ transform:rotateY(180deg); }
+.fc-face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  border-radius:18px; border:1.5px solid color-mix(in oklab, var(--course-c) 26%, var(--line));
+  background:var(--paper); box-shadow:var(--shadow-card); padding:18px; display:flex; flex-direction:column; overflow:hidden; }
+.fc-back{ transform:rotateY(180deg); background:color-mix(in oklab, var(--course-c) 7%, var(--paper)); }
+.fc-term{ margin:auto 0; font-family:var(--f-display); font-weight:600; font-size:30px; letter-spacing:-.01em; color:var(--ink); }
+.fc-def{ margin:auto 0; font-size:16px; line-height:1.45; color:var(--ink-2); }
+.fc-hint{ font-family:var(--f-hand); font-size:18px; color:var(--muted-2); align-self:flex-end; }
+
+/* Learning · key points */
+.kp{ display:flex; gap:11px; align-items:flex-start; margin-top:13px; }
+.kp .kn{ flex:none; width:24px; height:24px; border-radius:7px; display:grid; place-items:center;
+  font-family:var(--f-mono); font-size:12px; font-weight:600; color:var(--course-c);
+  background:color-mix(in oklab, var(--course-c) 13%, var(--paper));
+  border:1px solid color-mix(in oklab, var(--course-c) 28%, transparent); transition:color .8s ease; }
+.kp p{ margin:0; font-size:14.5px; line-height:1.45; color:var(--ink-2); }
+
+/* Learning · summary */
+.sm-h{ margin:11px 0 5px; font-family:var(--f-display); font-weight:600; font-size:17px; color:var(--ink); }
+.sm-p{ margin:0; font-size:13.5px; line-height:1.55; color:var(--muted); }
+.dcard .pline{ margin:8px 0; }
+
+/* Practice · multiple choice */
+.q-stem{ margin:11px 0 12px; font-size:14.5px; line-height:1.45; color:var(--ink); font-weight:500; }
+.opt{ display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line); background:var(--paper-2); margin-top:8px; transition:.18s; }
+.opt .kb{ flex:none; width:21px; height:21px; border-radius:6px; display:grid; place-items:center;
+  font-family:var(--f-mono); font-size:11px; color:var(--muted); border:1px solid var(--line-2); background:var(--paper); }
+.opt span.tx{ font-size:13.5px; color:var(--ink-2); }
+.opt:hover{ border-color:color-mix(in oklab, var(--course-c) 45%, var(--line)); }
+.opt.right{ border-color:var(--ok); background:color-mix(in oklab, var(--ok) 12%, var(--paper)); }
+.opt.right .kb{ background:var(--ok); color:#fff; border-color:var(--ok); }
+.opt.wrong{ border-color:var(--red); background:color-mix(in oklab, var(--red) 10%, var(--paper)); opacity:.85; }
+
+/* Practice · true / false */
+.tf-row{ display:flex; gap:10px; margin-top:14px; }
+.tf-btn{ flex:1; height:46px; border-radius:11px; border:1.5px solid var(--line); background:var(--paper-2);
+  font-family:var(--f-display); font-weight:600; font-size:15px; color:var(--ink-2); cursor:pointer; transition:.18s; }
+.tf-btn:hover{ border-color:color-mix(in oklab, var(--course-c) 45%, var(--line)); }
+.tf-btn.sel{ background:var(--course-c); color:#fff; border-color:var(--course-c); }
+
+/* Practice · long-form */
+.lf-field{ margin-top:12px; border:1.5px dashed color-mix(in oklab, var(--course-c) 34%, var(--line));
+  border-radius:12px; padding:13px; background:var(--paper-2); }
+.lf-lines{ height:46px; background:repeating-linear-gradient(0deg, transparent 0 14px, var(--line) 14px 15px); border-radius:3px; }
+.lf-actions{ display:flex; align-items:center; gap:9px; margin-top:12px; }
+.lf-chip{ display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 13px; border-radius:999px;
+  font-family:var(--f-display); font-size:12.5px; font-weight:600; cursor:pointer; }
+.lf-chip.up{ background:var(--course-c); color:#fff; border:0; transition:background-color .8s ease; }
+.lf-chip.up .ai-icon{ font-family:'Material Symbols Outlined'; font-size:16px; }
+.lf-or{ font-family:var(--f-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-2); }
+
+/* Documents · upload card */
+.up-card{ width:min(330px,88%); }
+.up-drop{ border:1.5px dashed color-mix(in oklab, var(--course-c) 40%, var(--line)); border-radius:13px;
+  padding:13px; background:var(--paper-2); display:flex; gap:13px; align-items:center; }
+.up-thumb{ flex:none; width:66px; height:86px; border-radius:6px; overflow:hidden; background:#fff;
+  border:1px solid var(--line); box-shadow:0 4px 12px -6px rgba(20,12,4,.4); }
+.up-thumb img{ width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+.up-meta b{ display:block; font-size:14px; color:var(--ink); font-weight:600; line-height:1.25; }
+.up-meta span{ font-family:var(--f-mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted-2); }
+.up-added{ display:inline-flex; align-items:center; gap:5px; margin-top:9px; font-family:var(--f-mono);
+  font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ok); }
+.up-added .ai-icon{ font-family:'Material Symbols Outlined'; font-size:15px; }
+.up-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:13px;
+  font-family:var(--f-mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-2); }
+.up-foot u{ color:var(--course-c); text-decoration:none; border-bottom:1px solid currentColor; }
+
+/* Documents · the ACTUAL uploaded page (a real paper sheet, smaller) */
+.doc-sheet{ position:relative; width:min(228px,64%); }
+.doc-sheet img{ display:block; width:100%; aspect-ratio:840/1238; object-fit:cover; border-radius:6px; background:#fff;
+  border:1px solid rgba(60,40,10,.14);
+  box-shadow:0 2px 4px rgba(20,12,4,.16), 0 26px 48px -22px rgba(20,12,4,.62); }
+/* Notepad · real handwritten pages as paper sheets (no crop, natural page ratio) */
+.note-sheet{ position:relative; width:min(224px,62%); }
+.note-sheet img{ display:block; width:100%; height:auto; border-radius:5px; background:#fff;
+  border:1px solid rgba(60,40,10,.14);
+  box-shadow:0 2px 4px rgba(20,12,4,.16), 0 24px 46px -22px rgba(20,12,4,.6); }
+.note-tag{ position:absolute; left:10px; bottom:12px; z-index:2; display:inline-flex; align-items:center; gap:6px;
+  background:var(--sticky); border-radius:8px; padding:5px 10px 5px 8px; transform:rotate(-1.6deg);
+  box-shadow:0 6px 16px -8px rgba(70,34,6,.5); font-family:var(--f-hand); font-size:15px; line-height:1; color:var(--scrib); }
+.note-tag .ai-icon{ font-family:'Material Symbols Outlined'; font-size:15px; color:var(--scrib); }
+/* Documents station hosts the real ported app components, loose scrapbook flow:
+   doc + sticky side-by-side, highlighted passage + pin card (comments closed) below */
+.station.st-right[data-i="2"]{ grid-template-columns:minmax(0,.72fr) clamp(80px,8vw,130px) minmax(0,1.48fr); }
+.station[data-i="2"] .st-cluster{ flex-direction:row; flex-wrap:wrap; gap:0 16px; align-items:flex-start; padding-left:clamp(8px,1vw,20px); padding-right:10px; }
+.station[data-i="2"] .st-cluster > .doc-sheet{ --rot:-2.4deg; }
+.station[data-i="2"] .st-cluster > .sn-scope{ --rot:1.8deg; }
+.station[data-i="2"] .st-cluster > .hl-scope{ --rot:-1.2deg; }
+.station[data-i="2"] .st-cluster > .pin-scope{ --rot:.8deg; }
+/* desktop: scatter the pieces around the station like papers on a desk, 
+   doc top-left · sticky tucked top-right · highlights mid-left over the doc's
+   corner · pin card low-right, each overlapping the last */
+@media (min-width:861px){
+  .station[data-i="2"] .st-cluster{ display:block; }
+  .station[data-i="2"] .st-cluster > *{ margin:0; --tx:0px; }
+  .station[data-i="2"] .st-cluster > .doc-sheet{ margin-left:4%; }
+  .station[data-i="2"] .st-cluster > .sn-scope{ margin:-302px 5% 0 auto; }
+  .station[data-i="2"] .st-cluster > .hl-scope{ width:min(430px,84%); margin:-34px auto 0 9%; }
+  .station[data-i="2"] .st-cluster > .pin-scope{ width:min(406px,94%); margin:-48px 0 0 auto; }
+}
+/* pin board card: rendered at its true 512px design width, scaled down to .79 so it
+   sits lighter in the pile (margin-bottom absorbs the scaled-away layout height) */
+@media (min-width:861px){
+  .jeff-appcard.pin-scope .pf-card.cmts-collapsed{ width:512px; max-width:none; transform:scale(.79);
+    transform-origin:top left; margin-bottom:-66px; }
+}
+.sn-scope{ width:258px; max-width:100%; }
+.hl-scope{ width:100%; max-width:430px; }
+.pin-scope{ width:100%; max-width:512px; }
+.jeff-appcard.pin-scope .pf-card{ width:100%; }
+.doc-chip{ position:absolute; left:14px; bottom:16px; display:flex; align-items:center; gap:9px;
+  background:#fff; border:1px solid var(--line); border-radius:11px; padding:8px 13px 8px 10px;
+  box-shadow:0 8px 22px -10px rgba(20,12,4,.5); }
+.doc-chip .ai-icon{ font-family:'Material Symbols Outlined'; font-size:19px; color:var(--ok); }
+.doc-chip b{ display:block; font-size:12.5px; color:var(--ink); font-weight:600; line-height:1.2; }
+.doc-chip small{ display:block; font-family:var(--f-mono); font-size:8.5px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted-2); margin-top:2px; }
+
+/* app-component placeholder card */
+.dcard.is-appref{ border-style:dashed; border-width:1.5px;
+  border-color:color-mix(in oklab, var(--course-c) 48%, var(--line));
+  background:color-mix(in oklab, var(--paper) 90%, var(--course-c)); box-shadow:var(--shadow-card); }
+.appref-tag{ position:absolute; top:13px; right:13px; z-index:2; font-family:var(--f-mono); font-size:8.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--course-c);
+  border:1px dashed color-mix(in oklab, var(--course-c) 55%, var(--line)); border-radius:999px; padding:3px 9px;
+  background:var(--paper); transition:color .8s ease; }
+.ap-ico{ font-family:'Material Symbols Outlined'; font-size:38px; color:var(--course-c); opacity:.9; transition:color .8s ease; }
+.ap-title{ margin:12px 0 5px; font-family:var(--f-display); font-weight:600; font-size:17px; color:var(--ink); }
+.ap-note{ font-family:var(--f-mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--muted-2); line-height:1.6; }
+.ap-note em{ font-style:normal; color:var(--course-c); }
+
+/* scattered watermarks (Documents station) */
+.wm-scatter{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+.wm-scatter span{ position:absolute; font-family:'Material Symbols Outlined'; color:#fff; opacity:.2;
+  line-height:1; text-shadow:0 2px 12px rgba(20,12,4,.2); }
+
+/* reveal on enter */
+@media (prefers-reduced-motion:no-preference){
+  .st-cluster, .st-text{ opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .station[data-in] .st-cluster, .station[data-in] .st-text{ opacity:1; transform:none; }
+  .node-pin{ opacity:0; transition:opacity .5s ease .05s, transform .3s ease, box-shadow .3s ease, background-color .3s ease; }
+  .station[data-in] .node-pin{ opacity:1; }
+}
+
+/* ---------------- mobile: straight left rail, text then cards stacked ---------------- */
+/* tablet: tighter fan + breathing room so cards never clip the section edge */
+@media (min-width:861px) and (max-width:1120px){
+  .dcard, .fc{ width:min(300px,84%); }
+  .st-right .st-cluster{ padding-left:10px; }
+  .st-left  .st-cluster{ padding-right:10px; }
+  .st-right:not([data-i="2"]) .st-cluster > :nth-child(2){ --tx:26px; }
+  .st-right:not([data-i="2"]) .st-cluster > :nth-child(3){ --tx:52px; }
+  .st-right:not([data-i="2"]) .st-cluster > :nth-child(4){ --tx:78px; }
+  .st-left .st-cluster > :nth-child(2){ --tx:-26px; }
+  .st-left .st-cluster > :nth-child(3){ --tx:-52px; }
+  .st-left .st-cluster > :nth-child(4){ --tx:-78px; }
+  /* Documents at tablet: rebalance the columns + shrink the scattered pieces */
+  .station.st-right[data-i="2"]{ grid-template-columns:minmax(0,.92fr) clamp(76px,7vw,110px) minmax(0,1.3fr); }
+  .station[data-i="2"] .st-cluster > .doc-sheet{ width:200px; }
+  .station[data-i="2"] .st-cluster > .sn-scope{ width:238px; margin-top:-238px; }
+  .station[data-i="2"] .st-cluster > .hl-scope{ width:min(400px,88%); margin-top:-28px; }
+  .station[data-i="2"] .st-cluster > .pin-scope{ width:min(406px,97%); margin-top:-38px; }
+}
+
+/* Notepad on desktop: three pages side by side, bigger, tucked into a deeper overlap;
+   hover does NOT raise a page (only this station) */
+@media (min-width:861px){
+  .station[data-i="3"] .st-cluster{ flex-direction:row; flex-wrap:nowrap; gap:0; align-items:flex-start; }
+  .station[data-i="3"] .st-cluster > .note-sheet{ flex:0 0 42%; max-width:280px; min-width:0; width:auto; margin-top:0 !important; --tx:0px; }
+  .station[data-i="3"] .st-cluster > .note-sheet + .note-sheet{ margin-left:-13%; }
+  .station[data-i="3"] .st-cluster > :nth-child(1){ z-index:1; --rot:-2.4deg; }
+  .station[data-i="3"] .st-cluster > :nth-child(2){ z-index:2; --rot:1.6deg; margin-top:22px !important; }
+  .station[data-i="3"] .st-cluster > :nth-child(3){ z-index:3; --rot:-1.1deg; margin-top:8px !important; }
+  /* lift on hover, but keep stacking order so it never jumps over the others */
+  .station[data-i="3"] .st-cluster > :hover{ --ty:-10px !important; }
+}
+
+@media (max-width:860px){
+  .trail-wrap{ width:94vw; }
+  .station{ grid-template-columns:1fr; min-height:0; padding:8px 0 40px; }
+  .station.st-right, .station.st-left{ grid-template-columns:1fr; }
+  .station.st-right[data-i="2"]{ grid-template-columns:1fr; }
+  .node{ position:absolute; grid-column:auto; left:24px; top:26px; transform:translate(-50%,-50%); }
+  .node-pin{ width:46px; height:46px; }
+  .node-pin .ai-icon{ font-size:22px; }
+  .node-num{ display:none; }
+  .st-wm{ display:none; }
+  .st-text{ grid-column:1 !important; grid-row:auto !important; justify-self:start !important; text-align:left !important;
+    max-width:none; padding:0 28px 0 52px !important; margin-bottom:18px; }
+  .st-right .st-kicker{ flex-direction:row; }
+  .st-right .st-desc{ margin-left:0; }
+  .st-right .st-feats, .st-feats{ align-items:flex-start !important; }
+  .st-right .st-feats li{ flex-direction:row !important; }
+  .st-cluster{ grid-column:1 !important; grid-row:auto !important; flex-direction:column !important; align-items:center !important; padding:0 24px 0 48px !important; }
+  .st-cluster > *{ margin-top:-18px !important; transform:rotate(-1.5deg) translateX(clamp(-46px, calc((100vw - 320px) * -0.08), 0px)) translateY(var(--ty,0px)) !important; }
+  .st-cluster > :nth-child(even){ transform:rotate(1.4deg) translateX(clamp(0px, calc((100vw - 320px) * 0.09), 52px)) translateY(var(--ty,0px)) !important; }
+  .st-cluster > *:first-child{ margin-top:0 !important; }
+  .dcard, .fc{ width:100%; max-width:440px; }
+  .doc-sheet{ width:100%; max-width:clamp(188px, 58vw, 320px); }
+  .note-sheet{ width:100% !important; max-width:clamp(196px, 60vw, 300px); }
+  .sn-scope{ width:100% !important; max-width:clamp(210px, 60vw, 320px) !important; }
+  .hl-scope{ width:100% !important; max-width:clamp(240px, 66vw, 430px) !important; }
+  .pin-scope{ width:100% !important; max-width:clamp(240px, 66vw, 430px) !important; }
+  .jeff-appcard.pin-scope .pf-card{ max-width:100%; }
+  .station[data-i="2"] .st-cluster{ gap:0 !important; flex-direction:column !important; }
+  /* Notepad on mobile: deep stack, only the tops peek, hover does NOT raise a page */
+  .station[data-i="3"] .st-cluster > *{ margin-top:-190px !important; }
+  .station[data-i="3"] .st-cluster > *:first-child{ margin-top:0 !important; }
+  .station[data-i="3"] .st-cluster > :nth-child(1){ z-index:1; }
+  .station[data-i="3"] .st-cluster > :nth-child(2){ z-index:2; }
+  .station[data-i="3"] .st-cluster > :nth-child(3){ z-index:3; }
+  .station[data-i="3"] .st-cluster > :hover{ --ty:-10px !important; }
+}
+
+/* ================= SECTION 4 · YOUR LLM (resurrected accordion) =================
+   The four-card expanding accordion, rebuilt to hammer one idea: the relationship
+   between you, your notes, and Jeff's LLM. Frozen colour + grid continue; a pinned
+   scroll steps through the four bonds (click/tap works too). */
+.llmrel{ position:relative; z-index:1; height:460vh;
+  background-color:var(--course-c,#ff6a2b); transition:background-color .8s ease; }
+.llm-pin{ position:sticky; top:0; height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(14px,2.4vh,28px); padding:clamp(40px,6vh,80px) clamp(20px,3vw,50px) clamp(26px,3.4vh,50px);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px);
+  background-size:44px 44px; }
+.llm-pin::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+  box-shadow:inset 0 0 250px 44px rgba(20,12,4,.20);
+  -webkit-mask:linear-gradient(to bottom, transparent 0, #000 300px);
+          mask:linear-gradient(to bottom, transparent 0, #000 300px); }
+.llm-head{ position:relative; z-index:2; text-align:center; color:#fff; max-width:min(820px,92vw); flex:none; }
+.llm-head .c-eyebrow{ margin-bottom:0; }
+body.at-llm .mark{ opacity:0; }
+
+.bonds{ position:relative; z-index:2; display:flex; gap:14px; width:min(1200px,95vw); height:min(62vh,560px); flex:none; }
+.bond{ position:relative; flex:1 1 0; min-width:0; overflow:hidden; cursor:pointer; color:var(--ink);
+  background:var(--paper); border:1.5px solid color-mix(in oklab, var(--course-c) 24%, var(--line));
+  border-radius:20px; box-shadow:0 2px 5px rgba(20,12,4,.07), 0 30px 60px -34px rgba(20,12,4,.5);
+  transition:flex-grow .62s cubic-bezier(.22,1,.36,1), box-shadow .4s ease, border-color .35s ease; will-change:flex-grow; }
+.bonds.has-active .bond{ flex-grow:.5; }
+.bonds .bond.on{ flex-grow:6; cursor:default;
+  box-shadow:0 4px 10px rgba(20,12,4,.10), 0 44px 82px -34px rgba(20,12,4,.62);
+  border-color:color-mix(in oklab, var(--course-c) 48%, var(--line)); }
+.bond::before{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--course-c) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--course-c) 8%, transparent) 1px, transparent 1px);
+  background-size:26px 26px; }
+.bond-wm{ position:absolute; z-index:0; right:-14px; bottom:-24px; font-family:'Material Symbols Outlined';
+  font-size:clamp(150px,20vw,238px); line-height:1; color:var(--course-c); opacity:.10; pointer-events:none;
+  transform:rotate(-10deg); transition:color .8s ease; }
+.bond-mini{ position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center;
+  padding:20px 0 22px; gap:16px; opacity:1; transition:opacity .28s ease; }
+.bond.on .bond-mini{ opacity:0; pointer-events:none; }
+.bond-num{ font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; color:var(--course-c); transition:color .8s ease; }
+.bond-mic{ font-family:'Material Symbols Outlined'; font-size:26px; color:var(--course-c); transition:color .8s ease; }
+.bond-vtitle{ writing-mode:vertical-rl; transform:rotate(180deg); margin-top:auto; margin-bottom:4px;
+  font-family:var(--f-display); font-weight:600; font-size:17px; letter-spacing:.01em; color:var(--ink); white-space:nowrap; }
+.bond-full{ position:absolute; inset:0; z-index:1; overflow-y:auto; scrollbar-width:none;
+  padding:clamp(24px,2.4vw,40px) clamp(24px,2.6vw,42px);
+  display:flex; flex-direction:column; gap:clamp(11px,1.3vh,17px);
+  opacity:0; transform:translateY(10px); pointer-events:none;
+  transition:opacity .4s ease .12s, transform .45s cubic-bezier(.22,1,.36,1) .12s; }
+.bond-full::-webkit-scrollbar{ display:none; }
+.bond.on .bond-full{ opacity:1; transform:none; pointer-events:auto; }
+.bond-kicker{ display:inline-flex; align-items:center; gap:9px; font-family:var(--f-mono); font-size:11px;
+  font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--course-c); transition:color .8s ease; }
+.bond-kicker::before{ content:""; width:20px; height:1.5px; background:currentColor; opacity:.55; }
+.bond-title{ margin:0; font-family:var(--f-display); font-weight:600; letter-spacing:-.02em;
+  font-size:clamp(27px,3.1vw,44px); line-height:1.02; color:var(--ink); }
+.bond-title em{ font-family:var(--f-script); font-style:italic; font-weight:600; color:var(--course-c); transition:color .8s ease; }
+.bond-desc{ margin:0; max-width:52ch; font-size:clamp(14px,1.1vw,16.5px); line-height:1.6; color:var(--muted); text-wrap:pretty; }
+.bond-feats{ list-style:none; margin:2px 0 0; padding:0; display:flex; flex-direction:column; gap:9px; }
+.bond-feats li{ display:flex; align-items:center; gap:11px; font-size:14.5px; color:var(--ink-2); }
+.bond-feats .ai-icon{ font-family:'Material Symbols Outlined'; font-size:20px; color:var(--course-c);
+  width:34px; height:34px; display:grid; place-items:center; flex:none; border-radius:9px;
+  background:color-mix(in oklab, var(--course-c) 12%, var(--paper));
+  border:1px solid color-mix(in oklab, var(--course-c) 26%, transparent); transition:color .8s ease; }
+.bond-eg{ margin-top:auto; }
+.bond-fine{ font-family:var(--f-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-2); }
+/* proof elements */
+.lm-chat{ background:var(--paper); border:1.5px solid color-mix(in oklab, var(--course-c) 30%, var(--line));
+  border-radius:14px 14px 14px 6px; padding:12px 14px; max-width:400px;
+  font-size:13.5px; line-height:1.6; color:var(--ink-2); box-shadow:0 2px 4px rgba(20,12,4,.05); }
+.lm-cite{ display:inline-flex; align-items:center; gap:4px; margin:0 2px; padding:2px 8px; border-radius:999px;
+  background:color-mix(in oklab, var(--course-c) 12%, var(--paper)); color:var(--course-c);
+  border:1px solid color-mix(in oklab, var(--course-c) 30%, transparent);
+  font-family:var(--f-mono); font-size:9.5px; letter-spacing:.04em; white-space:nowrap; vertical-align:1px; }
+.lm-scope{ display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
+  border:1.5px solid color-mix(in oklab, var(--course-c) 36%, var(--line)); background:var(--paper-2);
+  font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); }
+.lm-scope .ai-icon{ font-family:'Material Symbols Outlined'; font-size:16px; color:var(--course-c); }
+.lm-know{ display:flex; flex-direction:column; gap:9px; max-width:380px; }
+.lm-know .row{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-2); }
+.lm-know .tag{ font-family:var(--f-mono); font-size:9px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted-2); width:44px; flex:none; }
+.lm-know .lbl{ flex:none; width:150px; }
+.lm-know .bar{ flex:1; height:6px; border-radius:3px; background:var(--paper-3); overflow:hidden; }
+.lm-know .bar i{ display:block; height:100%; border-radius:3px; background:var(--course-c); transition:background-color .8s ease; }
+.lm-path{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; font-family:var(--f-mono); font-size:11px; color:var(--ink-2); }
+.lm-path .step{ padding:7px 12px; border-radius:9px; border:1px solid var(--line); background:var(--paper-2); }
+.lm-path .arr{ color:var(--course-c); font-family:'Material Symbols Outlined'; font-size:16px; }
+/* dots */
+.bonds-nav{ position:relative; z-index:2; display:flex; gap:9px; align-items:center; flex:none; }
+.ln-dot{ width:9px; height:9px; border-radius:50%; border:0; padding:0; cursor:pointer;
+  background:rgba(255,255,255,.42); transition:background .25s ease, width .35s ease; }
+.ln-dot.on{ background:#fff; width:28px; border-radius:5px; }
+.llm-cue{ margin-left:6px; font-family:var(--f-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(255,255,255,.72); display:inline-flex; align-items:center; gap:7px; }
+.llm-cue .ai-icon{ font-family:'Material Symbols Outlined'; font-size:15px; }
+
+@media (max-width:860px){
+  .llm-pin{ justify-content:flex-start; gap:14px; padding:clamp(38px,7vh,64px) 16px clamp(18px,3vh,32px); }
+  .bonds{ flex-direction:column; width:min(560px,94vw); height:auto; flex:1 1 auto; min-height:0; gap:10px; }
+  .bond{ flex:0 0 60px; min-height:0; will-change:flex-grow;
+    transition:flex-grow .55s cubic-bezier(.22,1,.36,1), box-shadow .4s ease, border-color .35s ease; }
+  .bonds.has-active .bond{ flex-grow:0; }
+  .bonds .bond.on{ flex:1 1 auto; }
+  .bond-wm{ font-size:148px; right:-8px; bottom:-30px; }
+  .bond-mini{ flex-direction:row; align-items:center; justify-content:flex-start; gap:14px; padding:0 20px; }
+  .bond-num{ order:-1; }
+  .bond-vtitle{ writing-mode:horizontal-tb; transform:none; margin:0; font-size:17px; }
+  .bond-mic{ margin-left:auto; }
+  .bond-full{ padding:20px 22px; gap:10px; }
+  .bond-title{ font-size:25px; }
+  .bond-desc{ font-size:14px; }
+  .bond-feats li{ font-size:14px; }
+  .bond-eg{ margin-top:14px; }
+  .lm-know .lbl{ width:120px; }
+}
+
+/* ================= SECTION 5 · PRIVACY (local LLM · the privacy lens) =================
+   Frozen colour + grid continue. Left: privacy copy. Right: the user's REAL handwritten
+   notes, pre-pixelated. The cursor is a lens that de-pixelates whatever it passes over, 
+   only you can read your notes. Toggle in the corner also pixelates the copy (option 1). */
+.privacy{ position:relative; z-index:1; min-height:100vh; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  padding:clamp(90px,12vh,150px) clamp(28px,6vw,96px) clamp(110px,14vh,170px);
+  background-color:var(--course-c,#ff6a2b); transition:background-color .8s ease;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1.5px, transparent 1.5px 44px);
+  background-size:44px 44px; }
+.privacy::before{ content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
+  box-shadow:inset 0 0 240px 40px rgba(20,12,4,.20);
+  -webkit-mask:linear-gradient(to bottom, #000 0, #000 calc(100% - 320px), transparent);
+          mask:linear-gradient(to bottom, #000 0, #000 calc(100% - 320px), transparent); }
+.privacy-inner{ position:relative; z-index:2; display:grid; grid-template-columns:minmax(0,1fr) minmax(380px,500px);
+  gap:clamp(36px,4.5vw,72px); align-items:center; width:min(1140px,100%); }
+
+/* ---- copy ---- */
+.pv-copywrap{ position:relative; color:#fff; min-width:0; }
+.pv-wm{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-8deg);
+  font-size:min(58vh,30vw); color:rgba(255,255,255,.10); pointer-events:none; user-select:none; z-index:0; }
+.pv-copy{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start; }
+.pv-copy .c-eyebrow{ margin-bottom:20px; }
+.pv-title{ margin:0; font-family:var(--f-display); font-weight:600; letter-spacing:-.02em;
+  font-size:clamp(34px,4.6vw,58px); line-height:1.04; text-wrap:balance; }
+.pv-title em{ font-family:var(--f-script); font-style:italic; font-weight:600;
+  text-decoration:underline; text-decoration-style:wavy; text-decoration-thickness:2px;
+  text-underline-offset:8px; text-decoration-color:rgba(255,255,255,.6); }
+.pv-blurb{ margin:22px 0 0; max-width:46ch; font-size:clamp(16px,1.6vw,19px); line-height:1.62;
+  color:rgba(255,255,255,.92); text-wrap:pretty; }
+.pv-blurb strong{ color:#fff; font-weight:700; }
+.pv-feats{ list-style:none; margin:28px 0 0; padding:0; display:flex; flex-direction:column; gap:14px; }
+.pv-feats li{ display:flex; align-items:center; gap:14px; font-size:clamp(15px,1.3vw,17px); font-weight:500; color:#fff; }
+.pv-feats .icon{ font-size:22px; width:44px; height:44px; flex:none; display:grid; place-items:center;
+  border-radius:12px; border:1.5px solid rgba(255,255,255,.5); background:rgba(255,255,255,.12); }
+.pv-feats .sub{ display:block; font-weight:400; font-size:13.5px; color:rgba(255,255,255,.75); margin-top:2px; }
+.pv-fine{ margin-top:30px; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:rgba(255,255,255,.62); display:flex; flex-wrap:wrap; gap:7px 0; align-items:center; }
+.pv-fine .sep{ margin:0 10px; opacity:.5; }
+
+/* ---- the note stack ---- */
+.peek-side{ position:relative; min-width:0; }
+.peek-stack{ position:relative; height:clamp(480px,58vh,620px); }
+.peek-page{ position:absolute; width:min(330px,72%); border-radius:6px; overflow:hidden;
+  background:#f4f2ec; box-shadow:0 3px 6px rgba(20,12,4,.14), 0 34px 70px -26px rgba(20,12,4,.6);
+  outline:1px solid rgba(20,12,4,.12); }
+.peek-page .pix{ display:block; width:100%; height:auto; image-rendering:pixelated; }
+.peek-page .clear{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  -webkit-mask-image:radial-gradient(circle var(--lr,0px) at var(--mx,-999px) var(--my,-999px), #000 62%, transparent 100%);
+          mask-image:radial-gradient(circle var(--lr,0px) at var(--mx,-999px) var(--my,-999px), #000 62%, transparent 100%); }
+.peek-page.pg1{ left:4%;  top:6%;   transform:rotate(-5deg); z-index:1; }
+.peek-page.pg2{ right:0;  top:0;    transform:rotate(3.4deg); z-index:2; }
+.peek-page.pg3{ left:18%; bottom:0; transform:rotate(-1.6deg); z-index:3;
+  box-shadow:0 5px 12px rgba(20,12,4,.18), 0 44px 90px -28px rgba(20,12,4,.68); }
+/* tape corners */
+.peek-page::before{ content:""; position:absolute; z-index:2; top:-9px; left:50%; width:86px; height:24px;
+  transform:translateX(-50%) rotate(-2deg); background:rgba(255,238,190,.65);
+  box-shadow:0 1px 3px rgba(20,12,4,.15); border-left:1px dashed rgba(120,90,20,.25); border-right:1px dashed rgba(120,90,20,.25); }
+/* red stamp on the top page */
+.pv-stamp{ position:absolute; z-index:3; right:-14px; top:16px; transform:rotate(8deg);
+  font-family:var(--f-mono); font-size:11px; font-weight:600; letter-spacing:.22em; text-transform:uppercase;
+  color:#c8503c; border:2.5px solid #c8503c; border-radius:5px; padding:7px 12px;
+  opacity:.72; mix-blend-mode:multiply; pointer-events:none; }
+/* the visible lens ring that chases the cursor */
+.pv-lens{ position:absolute; z-index:9; left:0; top:0; width:calc(var(--lr,0px)*2); height:calc(var(--lr,0px)*2);
+  transform:translate(calc(var(--mx,-999px) - var(--lr,0px)), calc(var(--my,-999px) - var(--lr,0px)));
+  border-radius:50%; pointer-events:none;
+  border:1.5px dashed rgba(255,255,255,.85);
+  box-shadow:0 0 0 4px rgba(255,255,255,.10), inset 0 0 30px rgba(255,255,255,.10); }
+.pv-lens .tag{ position:absolute; left:50%; top:calc(100% + 8px); transform:translateX(-50%);
+  font-family:var(--f-mono); font-size:9px; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(255,255,255,.9); white-space:nowrap; }
+/* scribbles around the stack */
+.pv-scrib{ position:absolute; font-family:var(--f-hand); color:rgba(255,255,255,.94); pointer-events:none; z-index:4; }
+.pv-scrib .sm{ display:block; font-size:.62em; opacity:.8; }
+.pv-scrib.a{ right:-8px; top:-72px; font-size:25px; transform:rotate(3deg); text-align:right; }
+.pv-scrib.b{ left:-30px; bottom:-30px; font-size:21px; transform:rotate(-6deg); }
+.pv-scrib.c{ left:50%; bottom:-46px; transform:translateX(-42%) rotate(-2deg); font-size:13px; opacity:.75; font-family:var(--f-mono); letter-spacing:.06em; white-space:nowrap; }
+/* corner note */
+
+@media (max-width:899px){
+  .privacy{ padding:clamp(70px,10vh,110px) clamp(22px,6vw,40px) clamp(90px,12vh,140px); }
+  .privacy-inner{ grid-template-columns:1fr; width:100%; max-width:560px; margin:0 auto; gap:34px; }
+  .pv-copy{ align-items:center; text-align:center; }
+  .pv-title{ font-size:clamp(31px,8.4vw,44px); }
+  .pv-blurb{ font-size:15.5px; line-height:1.6; max-width:36ch; }
+  .pv-feats{ align-items:flex-start; text-align:left; gap:16px; }
+  .pv-feats li{ font-size:15px; }
+  .pv-fine{ justify-content:center; }
+  .peek-stack{ height:clamp(400px,54vh,520px); }
+  .peek-page{ width:min(280px,64%); }
+  .pv-scrib.a{ right:2px; top:-58px; font-size:22px; }
+  .pv-scrib.c{ bottom:-38px; font-size:11px; }
+}
+
+</style>
+</style>
+</head>
+<body>
+
+<div class="mark"><span class="donut"></span> Jeff</div>
+
+<!-- one-shot catcher for the declutter click -->
+<div class="catcher" id="catcher"></div>
+<button class="replay" id="replay">↺ replay</button>
+<div class="hint" id="hint">
+  <div class="h1">click anywhere to clear<span class="arw">→</span></div>
+  <div class="h2">sweep the desk clean</div>
+</div>
+
+<main>
+  <section class="landing" id="landing" data-screen-label="Landing">
+    <!-- clutter lives WITH the page, clipped to the landing (+ a little spill over the fold) -->
+    <div class="clutter-clip"><div class="clutter" id="clutter"></div></div>
+
+    <div class="center">
+      <div class="card" id="card">
+        <div class="tape"></div>
+        <div class="cbrand"><span class="donut"></span> Jeff</div>
+        <div class="eyebrow">A calm study workspace</div>
+        <h1>Wouldn't it be nice to <em>remove the clutter?</em></h1>
+        <p class="sub">Every document, note and past paper, pulled into one tidy home, so you always know where to pick back up.</p>
+        <span class="scr">no more piles ↗</span>
+      </div>
+
+      <div class="welcome" id="welcome">
+        <h2>Welcome to <em>Jeff.</em></h2>
+        <a class="beta" id="betaBtn" href="#signup">
+          <span class="beta-label">Join the beta</span>
+          <span class="beta-chev icon">expand_more</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="courses" id="courses" data-screen-label="Any course">
+    <span class="course-wm icon" id="courseWm">history_edu</span>
+    <div class="courses-inner" id="learnAnchor">
+      <div class="course-copy">
+        <div class="c-eyebrow">Any subject · any course</div>
+        <h2 class="learn">You can prepare for <span class="anything">anything.</span></h2>
+        <div class="searchfield" aria-hidden="true">
+          <span class="s-icon icon">search</span>
+          <span class="subject" id="subject">World History</span>
+          <span class="caret"></span>
+          <span class="code-tag" id="codeTag">HIST 140</span>
+        </div>
+        <p class="blurb">Type in any course, Jeff turns it into summaries, flashcards and real practice.</p>
+        <div class="suggest">
+          <span class="suggest-lead">Try</span>
+          <div class="rail" id="rail"></div>
+        </div>
+      </div>
+      <div class="cardstack" id="cardStack"></div>
+    </div>
+  </section>
+
+  <section class="workspace" id="workspace" data-screen-label="The trail">
+    <div class="ws-scrib s1">follow the trail &darr;<span class="sm">left, right, all the way down</span></div>
+    <div class="ws-scrib s2">a peek at each tool &rarr;<span class="sm">real samples, not screenshots</span></div>
+
+    <div class="trail-head">
+      <div class="c-eyebrow">One workspace &middot; the whole study loop</div>
+      <h2 class="ws-title">Everything a course <em>becomes.</em></h2>
+      <p class="ws-sub">Drop a course in and it turns into a study kit. <b>Follow the trail</b> to see what each tool makes, flip a card, answer a question, drop a document in.</p>
+    </div>
+
+    <div class="trail-wrap" id="trailWrap">
+      <svg class="trail-svg" id="trailSvg" preserveAspectRatio="none" aria-hidden="true">
+        <path class="trail-shoulder" d=""></path>
+        <path class="trail-mid" d=""></path>
+        <path class="trail-road" d=""></path>
+      </svg>
+
+      <!-- STATION 1 · LEARNING (text left, cards right) -->
+      <section class="station st-right" data-i="0">
+        <span class="st-wm">auto_stories</span>
+        <div class="wm-scatter" aria-hidden="true">
+          <span style="left:5%;top:5%;font-size:92px;transform:rotate(-11deg)">summarize</span>
+          <span style="right:7%;top:1%;font-size:80px;transform:rotate(9deg)">style</span>
+          <span style="right:5%;bottom:8%;font-size:104px;transform:rotate(7deg)">flag</span>
+          <span style="left:34%;bottom:2%;font-size:78px;transform:rotate(-7deg)">style</span>
+          <span style="right:30%;top:40%;font-size:70px;transform:rotate(5deg)">summarize</span>
+        </div>
+        <div class="node"><span class="node-num">01</span><span class="node-pin"><span class="ai-icon">auto_stories</span></span></div>
+        <div class="st-text">
+          <span class="st-kicker">Study packets</span>
+          <h3 class="st-title">Learning <em>Packets</em></h3>
+          <p class="st-desc">Drop in a reading, a lecture, a messy page of notes, Jeff distils it into a packet you can actually study from: a plain-language summary, the points that matter, and a deck of cards to drill them home.</p>
+          <ul class="st-feats">
+            <li><span class="ai-icon">summarize</span>Summaries</li>
+            <li><span class="ai-icon">flag</span>Key points</li>
+            <li><span class="ai-icon">style</span>Flashcards</li>
+            <li><span class="ai-icon">quiz</span>Question cards</li>
+          </ul>
+        </div>
+        <div class="st-cluster">
+          <div class="dcard fc" data-flip>
+            <div class="fc-inner">
+              <div class="fc-face fc-front"><span class="dc-lbl">Flashcard &middot; tap to flip</span><div class="fc-term">Eigenstate</div><span class="fc-hint">what is it?</span></div>
+              <div class="fc-face fc-back"><span class="dc-lbl">Answer</span><div class="fc-def">A quantum state with a single, definite value you&rsquo;d actually measure.</div></div>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="dc-wm">flag</span>
+            <span class="dc-lbl">Key points</span>
+            <div class="kp"><span class="kn">1</span><p>A wavefunction holds every outcome at once, until measured.</p></div>
+            <div class="kp"><span class="kn">2</span><p>Measurement collapses it to one eigenstate.</p></div>
+            <div class="kp"><span class="kn">3</span><p>Energy in a box is quantised, it scales with n&sup2;.</p></div>
+          </div>
+          <div class="dcard">
+            <span class="dc-wm">summarize</span>
+            <span class="dc-lbl">Summary</span>
+            <div class="sm-h">Quantum states, in one breath</div>
+            <p class="sm-p">Systems live in a superposition of states, described by a wavefunction &Psi;. Observables are operators; a measurement returns one of their eigenvalues.</p>
+            <div class="pline" style="width:92%"></div><div class="pline s" style="width:74%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATION 2 · PRACTICE (cards left, text right) -->
+      <section class="station st-left" data-i="1">
+        <span class="st-wm">quiz</span>
+        <div class="wm-scatter" aria-hidden="true">
+          <span style="left:5%;top:4%;font-size:100px;transform:rotate(-10deg)">radio_button_checked</span>
+          <span style="left:36%;top:-1%;font-size:74px;transform:rotate(8deg)">rule</span>
+          <span style="left:7%;bottom:6%;font-size:92px;transform:rotate(6deg)">edit_note</span>
+          <span style="right:8%;bottom:3%;font-size:82px;transform:rotate(-8deg)">rule</span>
+          <span style="left:52%;top:42%;font-size:70px;transform:rotate(5deg)">radio_button_checked</span>
+        </div>
+        <div class="node"><span class="node-num">02</span><span class="node-pin"><span class="ai-icon">quiz</span></span></div>
+        <div class="st-text">
+          <span class="st-kicker">Active recall</span>
+          <h3 class="st-title">Practice <em>Sets</em></h3>
+          <p class="st-desc">The fastest way to make something stick is to use it. Jeff turns your material into every kind of question, pick-one, true-or-false, or a full written answer you type or upload, and keeps score as you go.</p>
+          <ul class="st-feats">
+            <li><span class="ai-icon">radio_button_checked</span>Multiple choice</li>
+            <li><span class="ai-icon">rule</span>True / false</li>
+            <li><span class="ai-icon">edit_note</span>Written answers</li>
+          </ul>
+        </div>
+        <div class="st-cluster">
+          <div class="dcard" data-mc>
+            <span class="dc-wm">quiz</span>
+            <span class="dc-lbl">Multiple choice</span>
+            <p class="q-stem">A particle in a 1-D box, how does energy scale with level n?</p>
+            <div class="opt" data-correct><span class="kb">A</span><span class="tx">Proportional to n&sup2;</span></div>
+            <div class="opt"><span class="kb">B</span><span class="tx">Proportional to n</span></div>
+            <div class="opt"><span class="kb">C</span><span class="tx">Constant for all n</span></div>
+            <div class="opt"><span class="kb">D</span><span class="tx">Proportional to 1/n</span></div>
+          </div>
+          <div class="dcard" data-tf>
+            <span class="dc-wm">rule</span>
+            <span class="dc-lbl">True / false</span>
+            <p class="q-stem">Spin is a form of the particle physically rotating in space.</p>
+            <div class="tf-row"><button class="tf-btn" type="button">True</button><button class="tf-btn" data-correct type="button">False</button></div>
+          </div>
+          <div class="dcard">
+            <span class="dc-wm">edit_note</span>
+            <span class="dc-lbl">Long-form answer</span>
+            <p class="q-stem">Explain, in your own words, why measurement collapses the wavefunction.</p>
+            <div class="lf-field"><div class="lf-lines"></div></div>
+            <div class="lf-actions"><button class="lf-chip up" type="button"><span class="ai-icon">upload_file</span>Upload answer</button><span class="lf-or">or type it in</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATION 3 · DOCUMENTS (text left, cards right) -->
+      <section class="station st-right" data-i="2">
+        <span class="st-wm">description</span>
+        <div class="wm-scatter" aria-hidden="true">
+          <span style="left:7%;top:5%;font-size:104px;transform:rotate(-12deg)">format_ink_highlighter</span>
+          <span style="left:38%;top:-2%;font-size:76px;transform:rotate(9deg)">sticky_note_2</span>
+          <span style="right:5%;top:30%;font-size:118px;transform:rotate(8deg)">push_pin</span>
+          <span style="left:22%;bottom:5%;font-size:88px;transform:rotate(6deg)">sticky_note_2</span>
+          <span style="right:22%;bottom:1%;font-size:104px;transform:rotate(-9deg)">format_ink_highlighter</span>
+          <span style="left:55%;top:44%;font-size:72px;transform:rotate(-6deg)">push_pin</span>
+        </div>
+        <div class="node"><span class="node-num">03</span><span class="node-pin"><span class="ai-icon">description</span></span></div>
+        <div class="st-text">
+          <span class="st-kicker">Your library</span>
+          <h3 class="st-title">Document <em>Library</em></h3>
+          <p class="st-desc">Every PDF, slide deck and past paper lands in one tidy home. Read them in a calm viewer, then make them yours, highlight what matters, drop sticky notes, and pin the bits worth keeping.</p>
+          <ul class="st-feats">
+            <li><span class="ai-icon">upload_file</span>Upload</li>
+            <li><span class="ai-icon">format_ink_highlighter</span>Highlighter</li>
+            <li><span class="ai-icon">sticky_note_2</span>Sticky notes</li>
+            <li><span class="ai-icon">push_pin</span>Pin</li>
+          </ul>
+        </div>
+        <div class="st-cluster">
+          <div class="doc-sheet">
+            <img src="elements/docs/grover-p2-full.jpg" alt="Uploaded document, Grover's Algorithm study, page 2" loading="lazy" draggable="false">
+            <div class="doc-chip"><span class="ai-icon">check_circle</span><span><b>Grover&rsquo;s Algorithm, study notes</b><small>PDF &middot; page 2 &middot; added to library</small></span></div>
+          </div>
+          <div class="jeff-appcard sn-scope">
+            <div class="note hw-study" data-color="violet">
+              <span class="hw-ix">&para;2</span>
+              <button class="x" type="button" aria-label="Remove note">&times;</button>
+              <span class="hw-wm">&para;2</span>
+              <div class="hw-study-body">
+                <div class="sb"><div class="sb-text"><div class="sb-md">
+                  <h4>Amplitude amplification</h4>
+                  <p>The oracle flips the <strong>phase</strong> of the marked state; the diffusion operator reflects every amplitude about the mean, so the good amplitude grows each round.</p>
+                </div></div></div>
+                <div class="sb-chat">
+                  <span class="bc-wand">auto_fix_high</span>
+                  <div class="bc-body">Repeat about &radic;N times, the probability of measuring |w&rang; approaches 1.</div>
+                </div>
+              </div>
+              <div class="hw-study-foot">
+                <button class="hw-study-ask" type="button"><span class="ai-icon">auto_fix_high</span>Ask Jeff</button>
+                <div class="hw-study-swatches">
+                  <button class="hw-sw is-on" type="button" data-color="violet"></button>
+                  <button class="hw-sw" type="button" data-color="amber"></button>
+                  <button class="hw-sw" type="button" data-color="green"></button>
+                  <button class="hw-sw" type="button" data-color="rose"></button>
+                  <button class="hw-sw" type="button" data-color="sky"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="jeff-appcard hl-scope">
+            <div class="hl-card">
+              <div class="hl-src">Highlights &middot; Grover&rsquo;s Algorithm &middot; p.2</div>
+              <p>In the n-qubit system, <mark class="hl" data-priority="1">every state can be represented as a unit vector |&Psi;&rang;</mark> in a 2&#8319;-dimensional Hilbert space. However, <mark class="hl" data-priority="2">Grover&rsquo;s algorithm operates within a simple geometric structure</mark> spanned by |w&rang; and |w&perp;&rang;, so the whole algorithm reduces to <mark class="hl" data-priority="3">a sequence of planar rotations</mark>, despite the underlying space having <mark class="hl" data-priority="4">dimension 2&#8319;</mark>.</p>
+              <div class="hl-meta">
+                <span class="hl-chip" data-priority="1"><span class="icon">format_ink_highlighter</span>P1 &middot; Critical</span>
+                <span class="hl-chip" data-priority="2"><span class="icon">format_ink_highlighter</span>P2 &middot; Important</span>
+                <span class="hl-chip" data-priority="3"><span class="icon">format_ink_highlighter</span>P3 &middot; Review</span>
+                <span class="hl-chip" data-priority="4"><span class="icon">format_ink_highlighter</span>P4 &middot; Context</span>
+              </div>
+            </div>
+          </div>
+          <div class="jeff-appcard pin-scope">
+            <div class="pf-card active cmts-collapsed">
+              <div class="bc-head">
+                <span class="pf-badge"><span class="icon">push_pin</span>PIN 04</span>
+                <span class="pf-type">Passage</span>
+                <span class="pf-srcmini">Grover&rsquo;s Algorithm &middot; p.2</span>
+                <span class="sp"></span>
+                <button class="pf-cmts" type="button" aria-label="Comments"><span class="icon">chat_bubble</span></button>
+                <button class="pf-remove" type="button" aria-label="Remove"><span class="icon">close</span></button>
+              </div>
+              <div class="bcard-body">
+                <div class="bc-main">
+                  <div class="bc-kind">Pinned passage</div>
+                  <div class="bc-content">
+                    <div class="demo-passage">
+                      <p>Grover&rsquo;s algorithm evolves entirely within the two-dimensional subspace spanned by the marked state <span class="hl">|w&rang;</span> and its orthogonal complement <span class="hl">|w&perp;&rang;</span>. Because both the oracle and diffusion operator preserve this subspace, the dynamics reduce to simple planar rotations.</p>
+                      <div class="cite">Shrikanth &middot; Grover&rsquo;s Algorithm &middot; fig. 1</div>
+                    </div>
+                  </div>
+                  <div class="bc-actions">
+                    <button class="pf-board" type="button"><span class="icon">space_dashboard</span>Send to board</button>
+                  </div>
+                </div>
+                <div class="bc-cmts">
+                  <div class="cmts-head"><span class="icon">chat_bubble</span>Comments<button class="cmts-collapse" type="button"><span class="icon">chevron_right</span></button></div>
+                  <div class="pf-study">
+                    <span class="hw-wm">push_pin</span>
+                    <div class="hw-study-body">
+                      <div class="sb"><div class="sb-text"><div class="sb-md"><p>Why &radic;N, not N?</p></div></div></div>
+                      <div class="sb-chat">
+                        <span class="bc-wand">auto_fix_high</span>
+                        <div class="bc-body">Each step rotates the state by a fixed angle; the good amplitude grows linearly, so its probability (the square) reaches ~1 after ~&radic;N steps.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATION 4 · NOTEPAD (cards left, text right) -->
+      <section class="station st-left" data-i="3">
+        <span class="st-wm">edit_note</span>
+        <div class="node"><span class="node-num">04</span><span class="node-pin"><span class="ai-icon">edit_note</span></span></div>
+        <div class="st-text">
+          <span class="st-kicker">Marginalia</span>
+          <h3 class="st-title">Note <em>book</em></h3>
+          <p class="st-desc">Upload your scanned notes and Jeff reads them into an <b>assessment of what you actually know</b>, tracking how far you&rsquo;ve moved through the course and where the gaps are, so every practice set and learning packet is tuned to you.</p>
+          <ul class="st-feats">
+            <li><span class="ai-icon">upload_file</span>Upload scanned notes</li>
+            <li><span class="ai-icon">fact_check</span>Maps what you know</li>
+            <li><span class="ai-icon">tune</span>Tailors packets &amp; practice</li>
+          </ul>
+        </div>
+        <div class="st-cluster">
+          <div class="note-sheet">
+            <img src="elements/docs/notes-p1.jpg" alt="Handwritten notes, 7.2 The 3D Infinite Well, page 1" loading="lazy" draggable="false">
+            <span class="note-tag"><span class="ai-icon">draw</span>7.2 The 3D Well &middot; p.1</span>
+          </div>
+          <div class="note-sheet">
+            <img src="elements/docs/notes-p3.jpg" alt="Handwritten notes, separable equations &amp; standing waves, page 2" loading="lazy" draggable="false">
+            <span class="note-tag"><span class="ai-icon">draw</span>Standing waves &middot; p.2</span>
+          </div>
+          <div class="note-sheet">
+            <img src="elements/docs/notes-p2.jpg" alt="Handwritten notes, energy levels &amp; degeneracy, page 3" loading="lazy" draggable="false">
+            <span class="note-tag"><span class="ai-icon">draw</span>Degeneracy &middot; p.3</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+  
+  <section class="llmrel" id="llmrel" data-screen-label="Your LLM">
+    <div class="llm-pin">
+      <div class="llm-head">
+        <div class="c-eyebrow">Your relationship with your LLM</div>
+        <h2 class="ws-title">Not a generic chatbot. <em>Yours.</em></h2>
+        <p class="ws-sub">Jeff&rsquo;s LLM is bound to your course and your notes, grounded in what you upload, focused on what you&rsquo;re studying, tuned to what you know. <b>Scroll</b>, or tap a card, to meet it.</p>
+      </div>
+
+      <div class="bonds has-active" id="bonds">
+        <article class="bond on" data-i="0">
+          <span class="bond-wm">format_quote</span>
+          <div class="bond-mini"><span class="bond-num">01</span><span class="bond-mic">format_quote</span><span class="bond-vtitle">Grounded</span></div>
+          <div class="bond-full">
+            <span class="bond-kicker">Grounded &middot; no hallucinations</span>
+            <h3 class="bond-title">It answers from <em>your</em> pages.</h3>
+            <p class="bond-desc">Every reply is drawn from the material you&rsquo;ve uploaded, notes, slides, past papers, and cited back to the exact paragraph so you can check it in one tap. If it isn&rsquo;t in your material, Jeff says so instead of inventing it.</p>
+            <ul class="bond-feats">
+              <li><span class="ai-icon">format_quote</span>Paragraph-level citations</li>
+              <li><span class="ai-icon">description</span>Provides citations to your uploaded notes</li>
+              <li><span class="ai-icon">library_books</span>Answers only from your uploads</li>
+              <li><span class="ai-icon">block</span>Never fills gaps with guesses</li>
+            </ul>
+            <div class="bond-eg">
+              <div class="lm-chat">The dynamics reduce to simple planar rotations <span class="lm-cite">&para;2 &middot; Grover p.2</span>, so a single angle tracks the whole state <span class="lm-cite">fig. 1</span>.</div>
+            </div>
+            <div class="bond-fine">every claim carries a source you can tap</div>
+          </div>
+        </article>
+
+        <article class="bond" data-i="1">
+          <span class="bond-wm">my_location</span>
+          <div class="bond-mini"><span class="bond-num">02</span><span class="bond-mic">my_location</span><span class="bond-vtitle">In-course</span></div>
+          <div class="bond-full">
+            <span class="bond-kicker">Course-specific &middot; no drift</span>
+            <h3 class="bond-title">Built for <em>this</em> course only.</h3>
+            <p class="bond-desc">The chatbot lives inside your course. Its vocabulary, notation and examples come from your syllabus, not the open internet, so answers match your lectures and never wander into generic AI territory.</p>
+            <ul class="bond-feats">
+              <li><span class="ai-icon">my_location</span>Scoped to your syllabus</li>
+              <li><span class="ai-icon">functions</span>Uses your course&rsquo;s notation</li>
+              <li><span class="ai-icon">explore_off</span>Won&rsquo;t wander off-topic</li>
+            </ul>
+            <div class="bond-eg">
+              <span class="lm-scope"><span class="ai-icon">my_location</span>PHYS 301 &middot; 34 documents in scope &middot; nothing else</span>
+            </div>
+            <div class="bond-fine">one course, one brain</div>
+          </div>
+        </article>
+
+        <article class="bond" data-i="2">
+          <span class="bond-wm">fact_check</span>
+          <div class="bond-mini"><span class="bond-num">03</span><span class="bond-mic">fact_check</span><span class="bond-vtitle">Attentive</span></div>
+          <div class="bond-full">
+            <span class="bond-kicker">Attentive &middot; tuned to you</span>
+            <h3 class="bond-title">It knows what you <em>know.</em></h3>
+            <p class="bond-desc">From your scanned notes and practice history, Jeff keeps a live map of what you&rsquo;ve mastered and where the gaps are, then pitches every explanation at your level. And because it isn&rsquo;t re-reading the whole internet, it answers fast.</p>
+            <ul class="bond-feats">
+              <li><span class="ai-icon">fact_check</span>Maps mastery vs. gaps</li>
+              <li><span class="ai-icon">tune</span>Explains at your level</li>
+              <li><span class="ai-icon">bolt</span>Replies in about a second</li>
+            </ul>
+            <div class="bond-eg">
+              <div class="lm-know">
+                <div class="row"><span class="tag">Solid</span><span class="lbl">Separable equations</span><span class="bar"><i style="width:88%"></i></span></div>
+                <div class="row"><span class="tag">Gap</span><span class="lbl">Degeneracy splitting</span><span class="bar"><i style="width:26%"></i></span></div>
+              </div>
+            </div>
+            <div class="bond-fine">refreshed with every note and every answer</div>
+          </div>
+        </article>
+
+        <article class="bond" data-i="3">
+          <span class="bond-wm">route</span>
+          <div class="bond-mini"><span class="bond-num">04</span><span class="bond-mic">route</span><span class="bond-vtitle">Guides</span></div>
+          <div class="bond-full">
+            <span class="bond-kicker">A tutor&rsquo;s instinct</span>
+            <h3 class="bond-title">It points you <em>forward.</em></h3>
+            <p class="bond-desc">Jeff doesn&rsquo;t stop at the answer. It sends you back to the exact paragraph worth re-reading, queues practice on the gap it just found, and tells you what to look at next.</p>
+            <ul class="bond-feats">
+              <li><span class="ai-icon">route</span>Suggests the next step</li>
+              <li><span class="ai-icon">menu_book</span>Points back to the source</li>
+              <li><span class="ai-icon">quiz</span>Queues the right practice</li>
+            </ul>
+            <div class="bond-eg">
+              <div class="lm-path"><span class="step">re-read &para;3</span><span class="arr">arrow_forward</span><span class="step">2 practice Qs</span><span class="arr">arrow_forward</span><span class="step">gap closed &#10003;</span></div>
+            </div>
+            <div class="bond-fine">answer &rarr; source &rarr; practice &rarr; progress</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="bonds-nav">
+        <button class="ln-dot on" data-i="0" type="button" aria-label="Grounded"></button>
+        <button class="ln-dot" data-i="1" type="button" aria-label="In-course"></button>
+        <button class="ln-dot" data-i="2" type="button" aria-label="Attentive"></button>
+        <button class="ln-dot" data-i="3" type="button" aria-label="Guides"></button>
+        <span class="llm-cue"><span class="ai-icon">south</span>scroll to explore</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="privacy" id="privacy" data-screen-label="Privacy">
+    <div class="privacy-inner">
+      <div class="pv-copywrap" id="pvCopyWrap">
+        <span class="pv-wm icon" aria-hidden="true">lock</span>
+        <div class="pv-copy pv-base">
+          <div class="c-eyebrow">The beauty of a <b style="font-weight:700; text-decoration:underline; text-underline-offset:3px;">local</b> LLM</div>
+          <h2 class="pv-title">Your data never leaves <em>your device.</em></h2>
+          <p class="pv-blurb">No cloud uploads, no third-party servers. Your course materials and study
+            progress stay <strong>100% local</strong>, the model reads your notes the same way you do:
+            right here, on your machine. Besides, running servers to host your data is expensive, 
+            we'd rather it lived on <strong>your device</strong> instead.</p>
+          <ul class="pv-feats">
+            <li><span class="icon">cloud_off</span><span>Your data never leaves your device<span class="sub">inference happens on your hardware, offline included</span></span></li>
+            <li><span class="icon">no_accounts</span><span>No account or login required<span class="sub">nothing to sign up for, nothing to leak</span></span></li>
+            <li><span class="icon">home_storage</span><span>Built around <b>YOUR</b> content<span class="sub">your uploads are the whole knowledge base</span></span></li>
+          </ul>
+          <div class="pv-fine"><span>0 bytes phoned home</span><span class="sep">·</span><span>no telemetry</span><span class="sep">·</span><span>delete = gone</span></div>
+        </div>
+      </div>
+
+      <div class="peek-side">
+        <div class="peek-stack" id="peekStack">
+          <span class="pv-scrib a">the snooper doesn't even see this &darr;<span class="sm">(and Jeff likes it that way)</span></span>
+          <span class="pv-scrib b">your cursor is the only key &nearr;</span>
+          <span class="pv-scrib c">phys203_hw · soci_notes · quantum_p2 · 100% local</span>
+          <figure class="peek-page pg1" data-lens>
+            <img class="pix" src="elements/privacy/p1-pix.png" alt="" width="52" height="67" draggable="false">
+            <img class="clear" src="elements/privacy/p1-crisp.jpg" alt="Handwritten physics homework" draggable="false">
+          </figure>
+          <figure class="peek-page pg2" data-lens>
+            <img class="pix" src="elements/privacy/p2-pix.png" alt="" width="52" height="79" draggable="false">
+            <img class="clear" src="elements/privacy/p2-crisp.jpg" alt="Handwritten sociology class notes" draggable="false">
+          </figure>
+          <figure class="peek-page pg3" data-lens>
+            <img class="pix" src="elements/privacy/p3-pix.png" alt="" width="52" height="76" draggable="false">
+            <img class="clear" src="elements/privacy/p3-crisp.jpg" alt="Handwritten quantum notes" draggable="false">
+            <span class="pv-stamp">For your eyes only</span>
+          </figure>
+          <div class="pv-lens" id="pvLens" data-lens><span class="tag">your autonomy</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="planner" id="planner" data-screen-label="The Planner">
+    <div class="pl-head">
+      <div class="c-eyebrow">Your week, planned by Jeff</div>
+      <h2 class="pl-title">A plan that adapts <em>to you.</em></h2>
+      <p class="pl-sub">Some chapters take longer than others, that&rsquo;s fine. Drag a packet to any
+        day and Jeff rearranges the rest; stall on a section and it clears space for you.
+        <b>Jeff knows what you know</b>, and plans around what you don&rsquo;t.</p>
+    </div>
+    <div class="pl-scrib a">some chapters just take longer &searr;<span class="sm">jeff plans for it</span></div>
+    <div class="pl-scrib b">drag a card, the rest follow &#8631;<span class="sm">try it, it&rsquo;s live</span></div>
+    <div class="pl-scrib c">no guilt calendar, the plan bends, not you</div>
+    <div class="plx-wrap">
+      <div class="plx" id="plx">
+        <div class="plx-head">
+          <div class="h-left"><span class="h-title">This week</span><span class="h-range">Mar <b>28</b>, Apr <b>04</b></span></div>
+          <div class="h-right">
+            <span class="plx-cue"><span class="ai-icon">auto_awesome</span>jeff rebalances live</span>
+            <button class="plx-replay" id="plxReplay"><span class="ai-icon">replay</span>Replay demo</button>
+          </div>
+        </div>
+        <div class="plx-grid" id="plxGrid"></div>
+      </div>
+      <div class="plx-fx" id="plxFx"></div>
+    </div>
+    <div class="pl-fine"><span class="ai-icon">event_repeat</span>planner &middot; rebalanced nightly &middot; learns your pace &middot; 100% local</div>
+  </section>
+
+
+
+  <section class="signup" id="signup" data-screen-label="Join the beta">
+    <div class="signup-inner">
+      <!-- left · copy -->
+      <div class="su-copywrap">
+        <span class="su-wm icon" aria-hidden="true">edit_square</span>
+        <div class="su-copy">
+          <!-- label options workshopped: A. "Sign the sheet." ★  B. "Put your name down."  C. "Get on the list." -->
+          <div class="c-eyebrow">One line left on the door</div>
+          <h2 class="su-title">Sign <em>the sheet.</em></h2>
+          <p class="su-blurb">Jeff is in <strong>private beta</strong>, we&rsquo;re letting a few people in
+            each week while the rough edges get sanded. The sign-up sheet is on the door; put your
+            name on a line and we&rsquo;ll save you a seat in the next wave, <strong>beta or demo</strong>,
+            same sheet.</p>
+          <ul class="su-feats">
+            <li><span class="icon">rocket_launch</span><span>Early access, completely free<span class="sub">bring your own model or API key, that&rsquo;s it</span></span></li>
+            <li><span class="icon">bug_report</span><span>A direct line to the builders<span class="sub">what you report is what gets fixed next</span></span></li>
+            <li><span class="icon">waving_hand</span><span>No strings attached<span class="sub">no account, no card, leave whenever you like</span></span></li>
+          </ul>
+          <div class="su-fine"><span>free during beta</span><span class="sep">&middot;</span><span>mac &middot; win &middot; linux</span><span class="sep">&middot;</span><span>~20 seats a week</span></div>
+        </div>
+      </div>
+
+      <!-- right · the sign-up sheet -->
+      <div class="sheet-side">
+        <div class="sheet-wrap">
+          <span class="su-scrib a">the sheet on the door &darr;<span class="sm">form b-03 &middot; one line, mostly</span></span>
+          <span class="su-scrib b">cohort 03 &middot; rolling invites &middot; ~20 seats a week</span>
+          <form class="su-paper sheet" id="betaSheet" novalidate>
+            <span class="tk" aria-hidden="true"><span class="sh"></span><span class="hole"></span><span class="base"></span><span class="stem"></span><span class="cap"></span></span>
+            <div class="grain"></div>
+            <span class="sh-wm" aria-hidden="true">B-03</span>
+            <div class="sh-head">
+              <span class="sh-brand"><span class="donut"></span>Jeff &middot; Beta Programme</span>
+              <span class="sh-formno">FORM B-03</span>
+            </div>
+            <div class="sh-rule" aria-hidden="true"></div>
+            <div class="sh-titlerow">
+              <h3 class="sh-title">Application for early access</h3>
+              <span class="sh-tr-right">
+                <span class="sh-note">print clearly &middot; one applicant per form</span>
+                <span class="sh-date">date: <i id="shDate">, </i></span>
+              </span>
+            </div>
+            <div class="sh-field f1">
+              <label for="shName">01 &middot; name</label>
+              <input id="shName" name="name" type="text" autocomplete="name" placeholder="print your name">
+            </div>
+            <div class="sh-field f2">
+              <label for="shEmail">02 &middot; email address <b class="req">*</b></label>
+              <input id="shEmail" name="email" type="email" autocomplete="email" placeholder="you@school.edu">
+              <span class="sh-err" id="shErr">&larr; check this line</span>
+              <span class="sh-staff s1">legibly please, the last three bounced</span>
+            </div>
+            <div class="sh-row2">
+              <div class="sh-field f3">
+                <label for="shSchool">03 &middot; uni / school</label>
+                <input id="shSchool" name="school" type="text" autocomplete="organization" placeholder="where you study">
+              </div>
+              <div class="sh-field f4">
+                <label for="shSubj">04 &middot; studying <i>(opt.)</i></label>
+                <input id="shSubj" name="subject" type="text" placeholder="quantum? all of it?">
+              </div>
+            </div>
+            <div class="sh-field f5">
+              <span class="lbl">05 &middot; requesting</span>
+              <div class="sh-checks" role="radiogroup" aria-label="requesting">
+                <button class="chk on" type="button" role="radio" aria-checked="true" data-val="beta">beta seat</button>
+                <button class="chk" type="button" role="radio" aria-checked="false" data-val="newsletter">newsletter</button>
+              </div>
+              <span class="sh-staff s2">newsletter = one a month. promise., staff</span>
+            </div>
+            <div class="sh-field f6">
+              <span class="lbl">06 &middot; signature <b class="req">*</b></span>
+              <div class="sig-row">
+                <span class="sig-view" aria-hidden="true">&swarr; tap again for your pass</span>
+                <button class="sh-sign" id="shSign" type="button">
+                  <span class="sig-ink" id="sigInk"></span>
+                  <span class="sig-hint"><span class="x">&#10007;</span>sign here to submit</span>
+                </button>
+                <span class="sh-staff s3">nice signature, you&rsquo;re wave 4 &#10003;</span>
+              </div>
+              <span class="sig-cap">signing requests a seat, beta or newsletter, same line</span>
+            </div>
+            <div class="sh-foot">
+              <div class="sh-office">
+                <span class="of-lbl">office use only</span>
+                <div class="of-grid">
+                  <span class="of-f"><b>rec&rsquo;d</b><i id="ofDate">&nbsp;</i></span>
+                  <span class="of-f"><b>wave</b><i>04, maybe 5</i></span>
+                  <span class="of-f"><b>seat</b><i>n&ordm; 043</i></span>
+                  <span class="of-f"><b>init</b><i>jd &#10003;</i></span>
+                </div>
+                <span class="of-stamp" id="ofStamp">received</span>
+              </div>
+              <p class="sh-disc"><b>disclosures &middot;</b> (a) seats are allocated in waves; shouting does not speed up the waves, we checked. (b) &ldquo;newsletter&rdquo; means one (1) email a month, written by a human, usually jeff. (c) your data never leaves your device, partly principle, partly because servers are expensive. (d) side effects may include actually finishing the reading. (e) this form is legally binding nowhere, but it is emotionally binding.</p>
+              <p class="sh-fine">no spam &middot; one email when your seat opens &middot; delete = gone</p>
+              <div class="sh-barrow" aria-hidden="true"><span class="bars"></span><span class="btxt">jeff &middot; b03</span></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <footer class="su-footer">
+      <div class="su-foot-cta">
+        <span class="su-foot-q">Still reading the fine print?</span>
+        <a class="su-foot-btn" href="#signup">Put your name down &uarr;</a>
+      </div>
+      <p class="su-foot-legal">
+        <span>&copy; 2026 Jeff.</span>
+        <span class="dot">&middot;</span>
+        <span>All rights reserved, the wrongs are open-source.</span>
+        <span class="dot">&middot;</span>
+        <span>Made by three people and a slightly overworked donut.</span>
+        <span class="dot">&middot;</span>
+        <span>If it breaks, you keep both halves.</span>
+      </p>
+      <p class="su-foot-mono">jeff is a study buddy, not your professor &middot; terms negotiable over coffee &middot; no all-nighters were endorsed in the making</p>
+    </footer>
+  </section>
+
+</main>
+
+<!-- lightbox · the beta pass -->
+<div class="su-modal" id="passModal" role="dialog" aria-modal="true" aria-label="Your beta pass" hidden>
+  <div class="su-backdrop" id="passBackdrop"></div>
+  <div class="pass-scene" id="passScene">
+    <div class="pass-pop">
+      <div class="su-paper pass" id="passCard">
+        <button class="pass-close" id="passClose" type="button" aria-label="Close">&times;</button>
+        <div class="grain"></div>
+        <div class="pass-inner">
+          <div class="pc-left">
+            <span class="pc-vlabel">portrait</span>
+            <div class="pc-portrait">
+              <span class="scrib1">hi!</span>
+              <span class="donut" aria-hidden="true"></span>
+              <span class="scrib2">it&rsquo;s jeff</span>
+            </div>
+            <div class="pc-bar"><span>&#10033;</span>pass<span class="circ">43</span><span>&#10033;</span></div>
+          </div>
+          <div class="pc-main">
+            <div class="pc-headrow">
+              <h3 class="pc-title">Beta Pass</h3>
+              <span class="pc-code">card code: <b id="pcCode">JEFF-B03-0000</b></span>
+            </div>
+            <dl class="pc-fields">
+              <div class="pc-row"><dt>Holder:</dt><dd class="hand" id="pcHolder">, </dd></div>
+              <div class="pc-row"><dt>Email:</dt><dd class="hand" id="pcEmail">, </dd></div>
+              <div class="pc-row"><dt>School:</dt><dd class="hand" id="pcSchool">, </dd></div>
+              <div class="pc-row"><dt>Studying:</dt><dd class="hand" id="pcSubj">, </dd></div>
+              <div class="pc-row"><dt>Type:</dt><dd class="hand" id="pcType">Excl. Beta</dd></div>
+              <div class="pc-row"><dt>Seat:</dt><dd>n&ordm; 043 &middot; cohort 03 &middot; summer &rsquo;26</dd></div>
+            </dl>
+            <div class="pc-sig">
+              <span class="line"><span class="script">jeff</span></span>
+              <span class="cap">authorised</span>
+            </div>
+            <div class="pc-foot">
+              <span class="pc-barcode" aria-hidden="true"></span>
+              <span class="pc-syms" aria-hidden="true"><span class="donut"></span><span class="icon">content_cut</span><span class="icon">school</span><span class="icon">bolt</span></span>
+              <span class="pc-no">16/43</span>
+            </div>
+          </div>
+          <span class="pc-stamp" aria-hidden="true"><span class="icon">mark_email_read</span>email sent</span>
+          <div class="pc-holo" aria-hidden="true" id="pcHolo"></div>
+          <div class="pc-relief" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+    <p class="pass-note"><span class="icon" aria-hidden="true">forward_to_inbox</span>confirmation on its way to <b id="passNoteEmail">you</b>, check your inbox</p>
+  </div>
+</div>
+
+
+
+
+
+<script>
+(function(){
+  const clutter = document.getElementById('clutter');
+  const stage   = document.getElementById('stage');
+  const replay  = document.getElementById('replay');
+  const reduce  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- seeded RNG so the scatter is stable across reloads ----
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  let rnd = mulberry32(20260701);
+  const R=(a,b)=>a+(b-a)*rnd();
+  const RI=(a,b)=>Math.floor(R(a,b+1));
+  const pick=arr=>arr[Math.floor(rnd()*arr.length)];
+
+  // ---- fine-detail helpers ----
+  const wave='M2 6 q9 -6 18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0 t18 0';
+  const sq=(w=100)=>`<svg class="sq" viewBox="0 0 ${w} 12" preserveAspectRatio="none"><path d="${wave}"/></svg>`;
+  const pl=(w)=>`<div class="pline" style="width:${w}%"></div>`;
+
+  // ---- seven paper variants ----
+  const variants=[
+    // 0 · ruled notebook
+    (w,h)=>`<div class="grain"></div><div class="rule"></div><div class="margin"></div>
+      <div class="pad" style="padding-left:44px">
+        <div class="hand" style="font-size:20px;margin-bottom:2px">Lecture 4, notes</div>
+        ${sq(84)}${sq(92)}
+        <div class="hand" style="font-size:17px;text-decoration:line-through;opacity:.55">skip this bit</div>
+        ${sq(70)}
+        <div class="hand" style="font-size:16px;color:var(--red)">re-read!! ✱</div>
+        <div class="fine" style="position:absolute;right:10px;bottom:8px;font-size:9px">p. ${RI(2,88)}</div>
+        <span class="star" style="right:14px;top:12px">✦</span>
+      </div>`,
+    // 1 · graph paper w/ sketch
+    (w,h)=>`<div class="grain"></div><div class="gridbg"></div>
+      <div class="pad">
+        <svg viewBox="0 0 120 90" style="width:100%;height:66%;overflow:visible">
+          <path d="M12 78 L12 10 M12 78 L110 78" stroke="#3a4a6a" stroke-width="1.4" fill="none"/>
+          <path d="M12 70 C40 66 60 26 104 16" stroke="#c8503c" stroke-width="1.6" fill="none"/>
+          <circle cx="104" cy="16" r="2.4" fill="#c8503c"/>
+          <text x="16" y="8" font-family="Caveat" font-size="10" fill="#22304a">y</text>
+          <text x="110" y="88" font-family="Caveat" font-size="10" fill="#22304a">x</text>
+        </svg>
+        <div class="hand" style="font-size:17px;margin-top:4px">∴ E = ½mv²</div>
+        <div class="fine" style="font-size:9px;margin-top:6px">fig. ${RI(1,9)} · rough</div>
+      </div>`,
+    // 2 · sticky note (varied reminders)
+    (w,h)=>{ const S=[
+        [`Don't forget<br>the problem set!!`,'due friday ✱'],
+        ['Read ch. 7<br>before lab','tuesday!'],
+        ['Quantum HW #7','due thurs · 1pm'],
+        ['Group study<br>@ 4pm','library, 3rd fl'],
+        ['Email prof<br>re: extension','do it today'],
+        ['Bring calculator!!','exam wed ✱'],
+        ['Finish lab<br>write-up','so behind…'],
+        ['Return textbooks','overdue!!'],
+        [`Grover's proof<br>, redo Q4`,'ask TA'],
+        ['Print lecture<br>slides','before 9am'],
+      ]; const s=pick(S); return `<div class="fold"></div>
+      <div class="pad" style="padding:16px 16px">
+        <div class="hand" style="font-size:22px;line-height:1.25">${s[0]}</div>
+        <div class="hand" style="font-size:17px;margin-top:8px;color:var(--red)">${s[1]}</div>
+        <div class="fine" style="position:absolute;right:12px;bottom:10px;font-size:9px;color:#8a7a3a">, me</div>
+      </div>`; },
+    // 3 · printout
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad">
+        <div class="fine" style="font-size:9px;letter-spacing:.1em;border-bottom:1px solid #e2ded2;padding-bottom:6px">CHAP_07 · DRAFT_v3.pdf</div>
+        <div style="margin-top:10px">${pl(96)}${pl(88)}${pl(93)}${pl(70)}</div>
+        <div style="height:34px;margin:12px 0;background:repeating-linear-gradient(135deg,#efece2,#efece2 7px,#e6e2d6 7px,#e6e2d6 14px);border-radius:3px"></div>
+        <div class="fine" style="font-size:9px;text-align:center">FIG. ${RI(1,12)}, schematic</div>
+        ${pl(90)}${pl(64)}
+        <div class="fine" style="position:absolute;left:15px;bottom:8px;font-size:8px;color:var(--muted-2)">© 20${RI(18,25)} · all rights reserved · pg ${RI(1,40)}/${RI(41,120)}</div>
+      </div>`,
+    // 4 · torn scrap
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad" style="padding:18px 16px">
+        <div class="hand" style="font-size:19px">wifi pw:</div>
+        <div class="hand" style="font-size:22px;color:var(--red);letter-spacing:1px">study-h4rd</div>
+        ${sq(66)}
+        <div class="fine" style="font-size:9px;margin-top:8px">room 214 ·</div>
+      </div>`,
+    // 5 · index card
+    (w,h)=>{ const C=[
+        ['Entropy','a measure of disorder in<br>a system, always ↑'],
+        ['Superposition','many states at once,<br>until it is measured'],
+        ['Alienation','dominated by forces of<br>our own creation'],
+        ['Anomie','breakdown of shared<br>norms &amp; social bonds'],
+        ['Eigenstate','a state with a definite<br>measurable value'],
+        ['Gauss&#39;s Law','flux through a surface<br>= charge enclosed / ε₀'],
+        ['Oracle','flips the phase of<br>the marked state'],
+        ['Diffusion','reflects amplitudes<br>about their mean'],
+        ['Relative poverty','share of the median<br>income in a place'],
+        ['Degeneracy','many states sharing<br>one energy level'],
+      ]; const t=pick(C); return `<div class="rule" style="background-position:0 30px"></div><span class="tag-corner">TERM</span>
+      <div class="pad" style="padding:12px 14px">
+        <div class="hand" style="font-size:20px;color:var(--red)">${t[0]}</div>
+        <div class="hand" style="font-size:15px;margin-top:6px;line-height:1.3">${t[1]}</div>
+        ${sq(58)}
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:9px">#${RI(10,99)}</div>
+      </div>`; },
+    // 6 · blank + coffee ring
+    (w,h)=>`<div class="grain"></div>
+      <div class="coffee" style="right:-18px;bottom:-16px"></div>
+      <div class="pad" style="padding:20px 18px">
+        <div class="hand" style="font-size:18px;transform:rotate(-3deg)">todo:</div>
+        <div class="hand" style="font-size:16px;line-height:1.7;margin-top:4px">
+          <span class="check"></span>readings<br>
+          <span class="check"></span>flashcards<br>
+          <span class="check"></span>past paper</div>
+        <span class="star" style="left:16px;bottom:14px;font-size:20px">↺</span>
+        <div class="fine" style="position:absolute;right:12px;top:12px;font-size:9px;opacity:.6">mon.</div>
+      </div>`,
+    // 7 · marked essay w/ red pen
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad">
+        <div class="fine" style="font-size:9px;letter-spacing:.08em">ESSAY · draft 2</div>
+        <div style="margin-top:12px">${pl(94)}${pl(88)}${pl(96)}${pl(72)}${pl(90)}${pl(60)}</div>
+        <svg viewBox="0 0 100 60" style="position:absolute;right:14px;top:38px;width:52px;overflow:visible">
+          <path d="M6 40 q18 -30 40 -8 q18 18 -2 24 q-24 6 -10 -18" fill="none" stroke="#c8503c" stroke-width="2"/>
+          <text x="14" y="30" font-family="Caveat" font-size="20" fill="#c8503c">B+</text></svg>
+        <div class="hand" style="color:var(--red);font-size:15px;position:absolute;left:16px;bottom:30px;transform:rotate(-3deg)">expand this ↑</div>
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:8px">wordcount 1,2${RI(10,99)}</div>
+      </div>`,
+    // 8 · highlighted textbook page
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad">
+        <div class="hand" style="font-size:17px;color:var(--scrib)">§ 3.2, Definitions</div>
+        <div style="margin-top:10px">
+          ${pl(96)}
+          <div style="background:rgba(255,224,80,.7);border-radius:2px;padding:2px 0;margin:6px 0">${pl(90)}${pl(78)}</div>
+          ${pl(94)}${pl(70)}
+          <div style="background:rgba(140,220,180,.55);border-radius:2px;padding:2px 0;margin:6px 0">${pl(84)}</div>
+          ${pl(92)}${pl(58)}
+        </div>
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:9px">p. ${RI(40,320)}</div>
+      </div>`,
+    // 9 · data / bar chart report
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad">
+        <div class="fine" style="font-size:9px;letter-spacing:.08em;border-bottom:1px solid #e2ded2;padding-bottom:6px">RESULTS · table ${RI(1,4)}</div>
+        <svg viewBox="0 0 120 76" style="width:100%;height:120px;margin-top:10px;overflow:visible">
+          <line x1="12" y1="66" x2="116" y2="66" stroke="#c9c6bd" stroke-width="1.4"/>
+          <line x1="12" y1="6" x2="12" y2="66" stroke="#c9c6bd" stroke-width="1.4"/>
+          ${[28,48,20,58,38,64].map((v,i)=>`<rect x="${20+i*16}" y="${66-v}" width="10" height="${v}" rx="1.5" fill="${i%2?'#ff6a2b':'#3a4a6a'}" opacity=".82"/>`).join('')}
+        </svg>
+        <div style="margin-top:6px">${pl(88)}${pl(64)}</div>
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:8px">n = ${RI(30,240)} · p&lt;.05</div>
+      </div>`,
+    // 10 · music staff
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad" style="padding:18px 16px">
+        <div class="hand" style="font-size:16px;margin-bottom:10px">practice, bars 8–16</div>
+        ${[0,1,2].map(()=>`<div style="height:26px;margin:14px 0;background:repeating-linear-gradient(0deg,transparent 0 5px,#bdbab0 5px 6px);position:relative"><span class="hand" style="position:absolute;left:4px;top:-6px;font-size:22px;color:var(--scrib)">𝄞</span></div>`).join('')}
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:9px">♩ = ${RI(60,140)}</div>
+      </div>`,
+    // 11 · worksheet w/ fill-in blanks
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad">
+        <div class="fine" style="font-size:9px;letter-spacing:.08em;border-bottom:1.5px solid #d8d5cb;padding-bottom:6px">PROBLEM SET ${RI(1,9)}</div>
+        <div class="hand" style="font-size:16px;margin-top:12px;line-height:2.1;color:var(--scrib)">
+          1. solve for <span style="border-bottom:1.5px solid var(--scrib);padding:0 18px">x</span><br>
+          2. show that <span style="border-bottom:1.5px solid var(--scrib);padding:0 26px"></span><br>
+          3. explain <span style="border-bottom:1.5px solid var(--scrib);padding:0 22px"></span></div>
+        <div class="hand" style="color:var(--red);font-size:15px;position:absolute;right:16px;bottom:16px;transform:rotate(-4deg)">check ans!</div>
+      </div>`,
+    // 12 · weekly schedule grid
+    (w,h)=>`<div class="grain"></div>
+      <div class="pad" style="padding:14px 14px">
+        <div class="hand" style="font-size:18px;margin-bottom:8px">this week</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;font-family:var(--f-mono);font-size:8px;color:var(--muted)">
+          ${['M','T','W','T','F'].map(d=>`<div style="text-align:center;color:var(--scrib);font-weight:600">${d}</div>`).join('')}
+          ${Array.from({length:15}).map((_,i)=>`<div style="height:${RI(16,34)}px;border-radius:2px;background:${rnd()<.4?(rnd()<.5?'rgba(255,106,43,.5)':'rgba(58,74,106,.45)'):'#efece2'}"></div>`).join('')}
+        </div>
+        <div class="fine" style="position:absolute;right:12px;bottom:8px;font-size:8px">wk ${RI(1,14)}</div>
+      </div>`
+  ];
+
+  const sheets=[];
+  function build(){
+    clutter.innerHTML='';
+    sheets.length=0;
+    rnd = mulberry32(20260701);
+    const vw=window.innerWidth, vh=window.innerHeight;
+    const cell = vw<720 ? 126 : 156;
+    const cols=Math.ceil(vw/cell)+2, rows=Math.ceil(vh/cell)+2;
+    let docIdx=0, cardIdx=0;
+    const __RES={
+      'elements/docs/soci-p1.webp':'sociP1','elements/docs/qm-p1.webp':'qmP1',
+      'elements/docs/grover-p1.webp':'groverP1','elements/docs/philo-letter.webp':'philoLetter',
+      'elements/docs/soci-p6.webp':'sociP6','elements/docs/qm-p2.webp':'qmP2',
+      'elements/docs/phys203-hw.webp':'phys203Hw','elements/docs/qm-p3.webp':'qmP3',
+      'elements/docs/grover-p10.webp':'groverP10','elements/docs/grover-p2.webp':'groverP2',
+      'elements/docs/em-c1.webp':'emC1','elements/docs/entangle.webp':'entangle',
+      'elements/docs/em-c3.webp':'emC3','elements/docs/em-c2.webp':'emC2',
+      'elements/docs/prob-density.webp':'probDensity','elements/docs/em-c6.webp':'emC6',
+      'elements/docs/em-c4.webp':'emC4','elements/docs/antisym-wave.webp':'antisymWave'
+    };
+    const rsv=p=>{ const id=__RES[p]; return (window.__resources&&id&&window.__resources[id])?window.__resources[id]:p; };
+    const DOCS=[
+      {s:'elements/docs/soci-p1.webp',ar:1.437},{s:'elements/docs/qm-p1.webp',ar:1.356},
+      {s:'elements/docs/grover-p1.webp',ar:1.454},{s:'elements/docs/philo-letter.webp',ar:1.337},
+      {s:'elements/docs/soci-p6.webp',ar:1.513},{s:'elements/docs/qm-p2.webp',ar:1.463},
+      {s:'elements/docs/phys203-hw.webp',ar:1.296},{s:'elements/docs/qm-p3.webp',ar:1.463},
+      {s:'elements/docs/grover-p10.webp',ar:1.474},{s:'elements/docs/grover-p2.webp',ar:1.474}
+    ];
+    const CARDS=[
+      {s:'elements/docs/em-c1.webp',ar:0.60},{s:'elements/docs/entangle.webp',ar:0.362},
+      {s:'elements/docs/em-c3.webp',ar:0.60},{s:'elements/docs/em-c2.webp',ar:0.60},
+      {s:'elements/docs/prob-density.webp',ar:0.847},{s:'elements/docs/em-c6.webp',ar:0.60},
+      {s:'elements/docs/em-c4.webp',ar:0.60},{s:'elements/docs/antisym-wave.webp',ar:0.866}
+    ];
+    for(let r=-2;r<rows;r++){
+      for(let c=-2;c<cols;c++){
+        // pile mix: real scanned pages (portrait) · flashcards/plots · small accents
+        const roll = rnd();
+        const type = roll<0.48 ? 'doc' : roll<0.70 ? 'card' : 'accent';
+        const accents=[2,4,5,6];
+        let vi=-1, w, h, page=null;
+        if(type==='doc'){
+          page=DOCS[docIdx++ % DOCS.length];
+          w=RI(250,300); h=Math.round(w*page.ar);        // exact page ratio → no crop
+        } else if(type==='card'){
+          page=CARDS[cardIdx++ % CARDS.length];
+          w=RI(262,326); h=Math.round(w*page.ar);        // exact ratio → no crop
+        } else {
+          vi=pick(accents);
+          if(vi===2){ w=RI(210,250); h=w; }              // sticky square
+          else if(vi===4){ w=RI(205,245); h=RI(180,220); } // scrap
+          else if(vi===5){ w=RI(270,310); h=RI(180,205); } // index card (landscape)
+          else { w=RI(230,275); h=RI(300,360); }         // blank / to-do sheet
+        }
+        const jx=R(-cell*.28,cell*.28), jy=R(-cell*.28,cell*.28);
+        const x=Math.round(c*cell + jx - w/2 + cell/2);
+        const y=Math.round(r*cell + jy - h/2 + cell/2);
+        const rot=R(-19,19);
+
+        const slot=document.createElement('div');
+        slot.className='slot';
+        slot.style.left=x+'px'; slot.style.top=y+'px';
+        slot.style.width=w+'px'; slot.style.height=h+'px';
+
+        const paper=document.createElement('div');
+        paper.className='paper';
+        paper.style.width=w+'px'; paper.style.height=h+'px';
+        paper.style.transform=`rotate(${rot}deg)`; // base tilt lives here… but float anim overrides transform
+        // put tilt on the slot instead via CSS var so float can add to it:
+        paper.style.setProperty('--dur', R(6,10).toFixed(2)+'s');
+        paper.style.setProperty('--del', R(-6,0).toFixed(2)+'s');
+        if(type==='doc' || type==='card'){
+          paper.style.background = type==='card' ? '#f3ecc8' : '#fbfaf6';
+          paper.innerHTML=`<img class="docimg" src="${rsv(page.s)}" alt="" loading="lazy" draggable="false">`
+                         +`<div class="grain" style="opacity:${type==='card'?'.10':'.12'}"></div>`;
+        } else {
+          if(vi===2){ paper.style.background='var(--sticky)'; paper.style.borderRadius='2px'; }
+          if(vi===5){ paper.style.background=pick(['#fdfcf9','#fbfaf4','#f6f4ea']); }
+          if(vi===4){ paper.style.borderRadius='2px'; paper.style.clipPath='polygon(0 6%, 96% 0, 100% 92%, 4% 100%)'; }
+          paper.innerHTML=variants[vi](w,h);
+        }
+
+        // random paperclip / staple accents
+        if(rnd()<0.14){ const clip=document.createElement('div'); clip.className='clip';
+          clip.style.left='-4px'; clip.style.top=RI(16,40)+'px'; slot.appendChild(clip); }
+
+        // wrap base rotation on slot, float on paper
+        slot.style.transform=`rotate(${rot}deg)`;
+        slot.dataset.rot=rot;
+        slot.appendChild(paper);
+        clutter.appendChild(slot);
+        sheets.push({slot, cx:x+w/2, cy:y+h/2, rot});
+      }
+    }
+  }
+
+  function spread(radius, spin){
+    const vw=window.innerWidth, vh=window.innerHeight;
+    const cx=vw/2, cy=vh/2;
+    let maxIn=1;
+    sheets.forEach(s=>{ const d=Math.hypot(s.cx-cx,s.cy-cy); if(d<radius) maxIn=Math.max(maxIn, radius-d); });
+    sheets.forEach(s=>{
+      let dx=s.cx-cx, dy=s.cy-cy;
+      let d=Math.hypot(dx,dy)||1;
+      const ux=dx/d, uy=dy/d;
+      const push=Math.max(0, radius-d);     // edge sheets (d>=radius) never move → clutter stays at the edges
+      const moved=push>1;
+      const tx=ux*push, ty=uy*push;
+      // centre-first stagger: sheets nearest the middle lead the sweep
+      const delay = reduce||!moved ? 0 : (1 - push/maxIn)*0.28;
+      s.slot.style.transitionDelay=delay+'s';
+      const rr = moved ? (s.rot + spin*(dx>0?1:-1)) : s.rot;
+      s.slot.style.transform=`translate(${tx}px,${ty}px) rotate(${rr}deg)`;
+    });
+  }
+
+  let state=0, timers=[];
+  function clearTimers(){ timers.forEach(clearTimeout); timers=[]; }
+
+  // well radius scales with the viewport so a big screen always keeps a thick
+  // cluttered ring, but never shrinks below what the title card needs
+  function radii(){
+    const hd = Math.hypot(window.innerWidth, window.innerHeight)/2;
+    return { r1: Math.max(510, hd*0.58), r2: Math.max(560, hd*0.64) };
+  }
+
+  function run(){
+    if(state>=1) return;
+    const {r2}=radii();
+    document.body.classList.add('cleared','welcomed');
+    document.documentElement.classList.add('unlocked');   // let the page scroll on
+    spread(r2, 12);            // one sweep opens the whole well
+    state=2;
+  }
+
+  function reset(){
+    clearTimers();
+    document.body.classList.remove('cleared','welcomed');
+    document.documentElement.classList.remove('unlocked');
+    document.documentElement.scrollTop=0;
+    state=0;
+    sheets.forEach(s=>{ s.slot.style.transitionDelay='0s'; s.slot.style.transform=`rotate(${s.rot}deg)`; });
+  }
+
+  const catcher=document.getElementById('catcher');
+  catcher.addEventListener('click',()=>{ if(state===0) run(); });
+  replay.addEventListener('click',(e)=>{ e.stopPropagation(); reset(); });
+
+  let rt;
+  window.addEventListener('resize',()=>{
+    clearTimeout(rt);
+    rt=setTimeout(()=>{
+      build();
+      if(state>=1){ // keep cleared look after resize
+        const {r2}=radii();
+        requestAnimationFrame(()=>spread(r2,12));
+      }
+    },220);
+  });
+
+  build();
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script>
+/* ===== Section 2 · "You can learn ___" course cycle ===== */
+(function(){
+  const COURSES=[
+    {name:'World History', code:'HIST 140', color:'#ff6a2b', icon:'history_edu'},
+    {name:'Quantum Mechanics', code:'PHYS 301', color:'#2f6bff', icon:'blur_on'},
+    {name:'Organic Chemistry', code:'CHEM 210', color:'#3f9d6b', icon:'science'},
+    {name:'Data Structures', code:'CS 61B', color:'#7a52e8', icon:'data_object'},
+    {name:'Calculus 1', code:'MATH 121', color:'#f2566b', icon:'functions'},
+    {name:'Music Theory', code:'MUSC 105', color:'#d99a06', icon:'music_note'},
+  ];
+  const section  = document.getElementById('courses');
+  const subjectEl= document.getElementById('subject');
+  const codeEl   = document.getElementById('codeTag');
+  const wm       = document.getElementById('courseWm');
+  const rail     = document.getElementById('rail');
+  const stack    = document.getElementById('cardStack');
+  const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const GLYPHS   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/<>*+=?';
+
+  // build the course rail as tappable example suggestions (open-ended, not a fixed menu)
+  COURSES.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className='chip'; el.title=c.code;
+    el.innerHTML=`<span class="icon">${c.icon}</span>${c.name}`;
+    rail.appendChild(el);
+  });
+  const chips=[...rail.children];
+  const ghost=document.createElement('div');
+  ghost.className='chip ghost';
+  ghost.innerHTML=`<span class="icon">add</span>…anything else`;
+  rail.appendChild(ghost);
+
+  // dummy study cards per subject, diverse types, one shared card chassis
+  const CARD_CONTENT={
+    'World History':[
+      {wm:'&',label:'Flashcard',kind:'Flashcard',foot:'tap to flip',body:`<div class="sc-term">Peace of Westphalia</div><div class="sc-def">1648, the treaties that seeded the modern sovereign state.</div>`},
+      {wm:'¶',label:'Key point',kind:'Key point',foot:'from § 3.2',body:`<div class="sc-kpoint"><span class="kn">1</span><p>Modernity is a rupture, not a smooth march of progress.</p></div>`},
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">The Cold War is dated roughly <b>1947–____</b>?</div>`},
+    ],
+    'Quantum Mechanics':[
+      {wm:'fx',label:'Formula',kind:'Formula',foot:'time-dependent',body:`<div class="sc-formula">$$i\\hbar\\,\\frac{\\partial \\Psi}{\\partial t} = \\hat{H}\\Psi$$</div>`},
+      {wm:'&',label:'Flashcard',kind:'Flashcard',foot:'tap to flip',body:`<div class="sc-term">Eigenstate</div><div class="sc-def">A state with a definite, measurable value.</div>`},
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">In a 1-D box, energy scales with <b>$n^2$</b>, true or ____?</div>`},
+    ],
+    'Organic Chemistry':[
+      {wm:'&',label:'Flashcard',kind:'Flashcard',foot:'tap to flip',body:`<div class="sc-term">Chirality</div><div class="sc-def">A molecule that can't be superimposed on its mirror image.</div>`},
+      {wm:'¶',label:'Key point',kind:'Key point',foot:'from § 5.1',body:`<div class="sc-kpoint"><span class="kn">1</span><p>Nucleophiles seek positive charge; electrophiles seek electrons.</p></div>`},
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">A carbon bonded to four different groups is a <b>____</b> centre?</div>`},
+    ],
+    'Data Structures':[
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">Big-O of binary search on a sorted array? <b>O(____)</b></div>`},
+      {wm:'&',label:'Flashcard',kind:'Flashcard',foot:'tap to flip',body:`<div class="sc-term">Hash map</div><div class="sc-def">Average O(1) lookup, insert and delete by key.</div>`},
+      {wm:'¶',label:'Key point',kind:'Key point',foot:'from § 2.4',body:`<div class="sc-kpoint"><span class="kn">1</span><p>Recursion trades stack space for simpler code.</p></div>`},
+    ],
+    'Calculus 1':[
+      {wm:'fx',label:'Formula',kind:'Formula',foot:'derivative',body:`<div class="sc-formula">$$\\frac{d}{dx}\\,e^{x} = e^{x}$$</div>`},
+      {wm:'¶',label:'Key point',kind:'Key point',foot:'from § 1.3',body:`<div class="sc-kpoint"><span class="kn">1</span><p>A limit describes the approach, not the arrival.</p></div>`},
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">Is every continuous function differentiable? <b>____</b></div>`},
+    ],
+    'Music Theory':[
+      {wm:'&',label:'Flashcard',kind:'Flashcard',foot:'tap to flip',body:`<div class="sc-term">Cadence</div><div class="sc-def">A chord progression that closes a musical phrase.</div>`},
+      {wm:'¶',label:'Key point',kind:'Key point',foot:'from § 4.2',body:`<div class="sc-kpoint"><span class="kn">1</span><p>Tension wants to resolve back to the tonic.</p></div>`},
+      {wm:'?',label:'Quiz',kind:'Practice',foot:'Press ↵ to check',body:`<div class="sc-q">A perfect fifth spans how many semitones? <b>____</b></div>`},
+    ],
+  };
+  function renderCards(name){
+    const list=CARD_CONTENT[name]||[];
+    stack.innerHTML=list.map((c,i)=>`<div class="scard" data-wm="${c.wm}">
+      <span class="scard-label">${c.label}</span>
+      <span class="scard-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="scard-body">${c.body}</div>
+      <div class="scard-foot"><span>${c.foot}</span><span class="kind">${c.kind}</span></div>
+    </div>`).join('');
+    if(window.renderMathInElement){ try{ renderMathInElement(stack,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); }catch(e){} }
+  }
+
+  const WM_X=['40%','60%','45%','62%','43%','58%'];
+
+  // ---- course ID: perpetually scramble the number, resolve to the real value each loop ----
+  const codeProxy={t:0}; let codeReal='', codeNumEl=null, codeFlip=0;
+  function setCode(code){
+    const m=String(code).match(/^(.*?)(\d+)\s*$/);
+    const pre=m?m[1]:code+' '; codeReal=m?m[2]:'';
+    codeEl.innerHTML='<span class="code-pre"></span><span class="code-num"></span>';
+    codeEl.firstChild.textContent=pre;
+    codeNumEl=codeEl.lastChild; codeNumEl.textContent=codeReal;
+    if(reduce||!window.anime||!codeReal) return;
+    anime.remove(codeProxy); codeProxy.t=0;
+    anime({targets:codeProxy,t:1,duration:1500,easing:'linear',loop:true,update:()=>{
+      if(!codeNumEl) return;
+      if(codeProxy.t>0.8){ if(codeNumEl.textContent!==codeReal) codeNumEl.textContent=codeReal; return; }
+      const now=performance.now();
+      if(now-codeFlip>60){ codeFlip=now; let s='';
+        for(let k=0;k<codeReal.length;k++) s+=(Math.random()*10|0); codeNumEl.textContent=s; }
+    }});
+  }
+
+  function scatterCards(){
+    const OFFSETS=[-46, 46, 0];   // 1st left · 2nd right · 3rd centered
+    [...stack.children].forEach((el,idx)=>{
+      const dir = idx%2 ? 1 : -1;
+      el.style.setProperty('--cr', (dir*(1.3+Math.random()*2.6)).toFixed(2)+'deg');
+      const baseX = OFFSETS[idx] ?? 0;
+      el.style.setProperty('--cx', (baseX + (-6+Math.random()*12)).toFixed(1)+'px');
+      el.style.setProperty('--cm', (idx===0 ? 0 : -(40+Math.random()*30)).toFixed(1)+'px');
+      el.style.zIndex = String(10-idx);
+    });
+  }
+
+  // ---- Phase 2/3: idle waver (anime.js) + cursor spread/parallax (single rAF spring) ----
+  let idleProxies=[];
+  const PARA=6, ROTP=1.3;
+  let mx=0, my=0, hovering=false, motionRunning=false;
+  function animateCards(){
+    if(reduce || !window.anime) return;
+    idleProxies.forEach(p=>anime.remove(p)); idleProxies=[];
+    [...stack.children].forEach((el,i)=>{
+      el.style.setProperty('--px','0px'); el.style.setProperty('--py','0px'); el.style.setProperty('--pr','0deg');
+      el._m={px:0,py:0,pr:0};
+      const p={t:0}; idleProxies.push(p);
+      anime({targets:p,t:1,duration:2200+i*300,delay:i*180,easing:'easeInOutSine',direction:'alternate',loop:true,
+        update:()=>{ el.style.setProperty('--ir',((p.t-0.5)*(2.0+i*0.6)).toFixed(2)+'deg');
+          el.style.setProperty('--iy',((p.t-0.5)*(7+i*2.5)).toFixed(1)+'px'); }});
+    });
+  }
+  // one persistent spring loop lerps each card toward its cursor target, no per-frame tween churn
+  function motionTick(){
+    const cards=[...stack.children], n=cards.length, mid=(n-1)/2;
+    let active=false;
+    cards.forEach((el,i)=>{
+      let m=el._m; if(!m){ m={px:0,py:0,pr:0}; el._m=m; }
+      let tx=0,ty=0,tr=0;
+      if(hovering){
+        const depth=1+i*0.6;
+        tx=mx*PARA*depth + (i-mid)*12;
+        ty=my*PARA*0.75*depth + (i-mid)*-5 - i*1.5;
+        tr=mx*ROTP*depth + (i-mid)*1.2;
+      }
+      m.px+=(tx-m.px)*0.12; m.py+=(ty-m.py)*0.12; m.pr+=(tr-m.pr)*0.12;
+      if(Math.abs(tx-m.px)>0.05||Math.abs(ty-m.py)>0.05||Math.abs(tr-m.pr)>0.02||hovering) active=true;
+      el.style.setProperty('--px',m.px.toFixed(2)+'px');
+      el.style.setProperty('--py',m.py.toFixed(2)+'px');
+      el.style.setProperty('--pr',m.pr.toFixed(3)+'deg');
+    });
+    if(active){ requestAnimationFrame(motionTick); } else { motionRunning=false; }
+  }
+  function startMotion(){ if(!motionRunning){ motionRunning=true; requestAnimationFrame(motionTick); } }
+  if(!reduce){
+    stack.addEventListener('mousemove',e=>{ const r=stack.getBoundingClientRect();
+      mx=((e.clientX-r.left)/r.width-0.5)*2; my=((e.clientY-r.top)/r.height-0.5)*2; hovering=true; startMotion(); });
+    stack.addEventListener('mouseenter',()=>{ hovering=true; startMotion(); });
+    stack.addEventListener('mouseleave',()=>{ hovering=false; startMotion(); });
+  }
+
+  function theme(c,i){
+    section.style.setProperty('--c', c.color);
+    document.documentElement.style.setProperty('--course-c', c.color);   // shared → Section 3 inherits the frozen colour
+    const ebName=document.getElementById('embedCourse'); if(ebName) ebName.textContent=c.name;
+    stack.style.setProperty('--accent', c.color);
+    setCode(c.code);
+    wm.classList.add('swap');
+    stack.classList.add('swap');
+    setTimeout(()=>{ wm.textContent=c.icon; wm.style.left=WM_X[i%WM_X.length]; wm.classList.remove('swap'); renderCards(c.name); scatterCards(); animateCards(); stack.classList.remove('swap'); }, 260);
+    chips.forEach((ch,j)=>ch.classList.toggle('on', j===i));
+  }
+
+  const tween={t:0};
+  function scramble(target, dur, done){
+    if(reduce || !window.anime){ subjectEl.textContent=target; done&&done(); return; }
+    anime.remove(tween); tween.t=0;
+    const render=()=>{
+      const rev=Math.floor(tween.t*target.length);
+      let s='';
+      for(let i=0;i<target.length;i++){
+        s += (i<rev || target[i]===' ') ? target[i] : GLYPHS[(Math.random()*GLYPHS.length)|0];
+      }
+      subjectEl.textContent=s;
+    };
+    anime({targets:tween, t:1, duration:dur, easing:'easeInOutSine',
+      update:render, complete:()=>{ subjectEl.textContent=target; done&&done(); }});
+  }
+
+  let i=0, hold=null, running=false;
+  function step(){
+    if(!running) return;
+    const c=COURSES[i];
+    theme(c,i);
+    scramble(c.name, 900, ()=>{
+      hold=setTimeout(()=>{ i=(i+1)%COURSES.length; step(); }, 1700);
+    });
+  }
+  function start(){ if(running) return; running=true; step(); }
+  function stop(){ running=false; clearTimeout(hold); if(window.anime) anime.remove(tween); }
+
+  // manual control: jump to a subject, then let the auto-cycle continue from there
+  function go(idx){
+    i=((idx % COURSES.length)+COURSES.length)%COURSES.length;
+    clearTimeout(hold);
+    running=true;
+    step();
+  }
+  chips.forEach((ch,idx)=> ch.addEventListener('click',()=>go(idx)));
+
+  // Join the beta → smooth-scroll Section 2's content to the centre of the viewport
+  document.getElementById('betaBtn').addEventListener('click',(e)=>{
+    e.preventDefault();
+    const el=document.getElementById('learnAnchor');
+    const r=el.getBoundingClientRect();
+    const target=window.scrollY + r.top + r.height/2 - window.innerHeight/2;
+    window.scrollTo({top:Math.max(0,target), behavior:'smooth'});
+  });
+
+  // paint the first course immediately so it's correct before it scrolls in
+  theme(COURSES[0],0); subjectEl.textContent=COURSES[0].name;
+  stack.style.setProperty('--accent', COURSES[0].color); renderCards(COURSES[0].name); scatterCards(); animateCards();
+
+  // expose so Section 3 can freeze the cycle when it scrolls into view
+  window.__courseCycle = { start, stop };
+
+  new IntersectionObserver((es)=>{
+    es.forEach(e=> e.isIntersecting ? start() : stop());
+  },{threshold:.45}).observe(section);
+})();
+</script>
+
+<script>
+/* ===== Section 3 · the trail, draw meandering road through station nodes ===== */
+(function(){
+  const wrap = document.getElementById("trailWrap");
+  const svg  = document.getElementById("trailSvg");
+  if(!wrap || !svg) return;
+  const shoulder = svg.querySelector(".trail-shoulder");
+  const road     = svg.querySelector(".trail-road");
+  const nodes = [...wrap.querySelectorAll(".node")];
+
+  function draw(){
+    const wb = wrap.getBoundingClientRect();
+    const W = wrap.clientWidth, H = wrap.clientHeight;
+    if(!W || !H) return;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    let pts = [];
+    nodes.forEach(n=>{ const r=n.getBoundingClientRect(); const st=n.closest(".station");
+      const sr=(st||n).getBoundingClientRect();
+      const x=(r.left - wb.left) + r.width/2;
+      const P=Math.min(120, sr.height*0.22);
+      pts.push({x:x, y:(sr.top - wb.top) + P});
+      pts.push({x:x, y:(r.top - wb.top) + r.height/2});
+      pts.push({x:x, y:(sr.bottom - wb.top) - P});
+    });
+    if(!pts.length) return;
+    pts = [{x:pts[0].x, y:0}].concat(pts, [{x:pts[pts.length-1].x, y:H}]);
+    let d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for(let i=0;i<pts.length-1;i++){
+      const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||pts[i+1];
+      const c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+      const c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+      d += " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + p2.x.toFixed(1) + " " + p2.y.toFixed(1);
+    }
+    shoulder.setAttribute("d", d); road.setAttribute("d", d); var mid=svg.querySelector(".trail-mid"); if(mid) mid.setAttribute("d", d);
+  }
+
+  let raf=0;
+  function schedule(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(draw); }
+  if(window.ResizeObserver){ new ResizeObserver(schedule).observe(wrap); }
+  window.addEventListener("resize", schedule);
+  window.addEventListener("load", schedule);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  wrap.querySelectorAll("img").forEach(img=>{ if(!img.complete) img.addEventListener("load", schedule); });
+  schedule();
+
+  // reveal + active pin
+  const stations = [...wrap.querySelectorAll(".station")];
+  const io = new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting) e.target.setAttribute("data-in",""); }); schedule(); },{threshold:0, rootMargin:"0px 0px -80px 0px"});
+  stations.forEach(s=> io.observe(s));
+  const ioActive = new IntersectionObserver((es)=>{ es.forEach(e=>{
+    const nd=e.target.querySelector(".node"); if(nd) nd.classList.toggle("on", e.isIntersecting); }); },
+    {rootMargin:"-45% 0px -45% 0px", threshold:0});
+  stations.forEach(s=> ioActive.observe(s));
+
+  // micro-demos: flashcard flip, MC select, TF toggle
+  wrap.querySelectorAll("[data-flip]").forEach(c=> c.addEventListener("click", ()=> c.classList.toggle("flipped")));
+  wrap.querySelectorAll("[data-mc]").forEach(card=>{ const opts=[...card.querySelectorAll(".opt")];
+    opts.forEach(o=> o.addEventListener("click", ()=>{ opts.forEach(x=>x.classList.remove("right","wrong"));
+      if(o.hasAttribute("data-correct")) o.classList.add("right");
+      else { o.classList.add("wrong"); card.querySelector("[data-correct]").classList.add("right"); } })); });
+  wrap.querySelectorAll("[data-tf]").forEach(card=>{ const btns=[...card.querySelectorAll(".tf-btn")];
+    btns.forEach(b=> b.addEventListener("click", ()=>{ btns.forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); })); });
+
+  // fade the fixed site mark while the trail is on screen
+  const sec = document.getElementById("workspace");
+  if(sec){ new IntersectionObserver((es)=>{ es.forEach(e=>
+    document.body.classList.toggle("at-workspace", e.isIntersecting)); },{threshold:.04}).observe(sec); }
+})();
+</script>
+
+<script>
+/* ===== Section 4 · Your LLM, pinned four-card accordion (scroll or tap) ===== */
+(function(){
+  var section=document.getElementById("llmrel"); var bonds=document.getElementById("bonds");
+  if(!section||!bonds) return;
+  var cards=[].slice.call(bonds.querySelectorAll(".bond"));
+  var dots=[].slice.call(section.querySelectorAll(".ln-dot"));
+  var N=cards.length, active=0, ticking=false;
+  var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function setActive(i){ i=Math.max(0,Math.min(N-1,i)); if(i===active) return; active=i;
+    bonds.classList.add("has-active");
+    cards.forEach(function(c,k){ c.classList.toggle("on",k===i); });
+    dots.forEach(function(d,k){ d.classList.toggle("on",k===i); }); }
+  function update(){ ticking=false;
+    var total=section.offsetHeight-window.innerHeight; if(total<=0) return;
+    var scrolled=Math.min(Math.max(-section.getBoundingClientRect().top,0),total);
+    setActive(Math.min(N-1,Math.floor(scrolled/total*N+0.00001))); }
+  window.addEventListener("scroll",function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } },{passive:true});
+  window.addEventListener("resize",update);
+  function goTo(i){ var total=section.offsetHeight-window.innerHeight;
+    var top=window.scrollY+section.getBoundingClientRect().top;
+    setActive(i);
+    window.scrollTo({top:Math.max(0, top+((i+0.5)/N)*total), behavior:reduce?"auto":"smooth"}); }
+  cards.forEach(function(c){ c.addEventListener("click",function(){ var i=+c.dataset.i; if(i!==active) goTo(i); }); });
+  dots.forEach(function(d){ d.addEventListener("click",function(){ goTo(+d.dataset.i); }); });
+  update();
+  new IntersectionObserver(function(es){ es.forEach(function(e){
+    document.body.classList.toggle("at-llm", e.isIntersecting); }); },{threshold:0, rootMargin:"0px 0px -80px 0px"}).observe(section);
+})();
+</script>
+
+<script>
+/* ===== Section 5 · Privacy, the cursor lens that de-pixelates the notes ===== */
+(function(){
+  var section=document.getElementById("privacy"); if(!section) return;
+  var layers=[].slice.call(section.querySelectorAll("[data-lens]"));
+  var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var LR=118;                                  // lens radius (px)
+  var tx=-999,ty=-999, cx=-999,cy=-999;        // target / current pointer (client coords)
+  var tr=0, cr=0;                              // target / current radius
+  var hasPointer=false, roaming=false, running=false, inView=false, t0=performance.now();
+
+  function frame(now){
+    if(!running) return;
+    if(roaming && !hasPointer){
+      // slow lissajous drift over the top page until a real cursor shows up
+      var stack=document.getElementById("peekStack");
+      var r=stack.getBoundingClientRect();
+      var t=(now-t0)/1000;
+      tx=r.left + r.width *(0.5 + 0.30*Math.sin(t*0.45));
+      ty=r.top  + r.height*(0.5 + 0.34*Math.sin(t*0.31+1.7));
+      tr=LR*0.85;
+    }
+    var k=reduce?1:0.16, kr=reduce?1:0.10;
+    cx+=(tx-cx)*k; cy+=(ty-cy)*k; cr+=(tr-cr)*kr;
+    for(var i=0;i<layers.length;i++){
+      var el=layers[i];
+      var host=el.classList.contains("pv-lens")?el.parentElement:el;
+      var b=host.getBoundingClientRect();
+      el.style.setProperty("--mx",(cx-b.left).toFixed(1)+"px");
+      el.style.setProperty("--my",(cy-b.top ).toFixed(1)+"px");
+      el.style.setProperty("--lr",cr.toFixed(1)+"px");
+    }
+    requestAnimationFrame(frame);
+  }
+  function start(){ if(!running){ running=true; requestAnimationFrame(frame); } }
+  function stop(){ running=false; }
+
+  section.addEventListener("pointermove",function(e){
+    tx=e.clientX; ty=e.clientY; tr=LR;
+    if(e.pointerType==="mouse"){ hasPointer=true; roaming=false; }
+    start();
+  },{passive:true});
+  section.addEventListener("pointerleave",function(){ tr=0; });
+  section.addEventListener("touchmove",function(e){
+    var t=e.touches[0]; if(!t) return; tx=t.clientX; ty=t.clientY; tr=LR; roaming=false; start();
+  },{passive:true});
+
+  new IntersectionObserver(function(es){ es.forEach(function(e){
+    inView=e.isIntersecting;
+    if(inView){ if(!hasPointer && !reduce){ roaming=true; tr=LR*0.85; } start(); }
+    else { stop(); }
+  }); },{threshold:.25}).observe(section);
+})();
+</script>
+
+<script src="jeff-planner.js" defer></script>
+<script src="jeff-signup.js" defer></script>
+
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ff6a2b"/><g><rect x="10" y="16" width="26" height="32" rx="2" fill="#fdfcf9" transform="rotate(-10 23 32)"/><rect x="60" y="12" width="26" height="32" rx="2" fill="#fbfaf4" transform="rotate(9 73 28)"/><rect x="14" y="58" width="26" height="30" rx="2" fill="#f6f4ea" transform="rotate(7 27 73)"/><rect x="62" y="56" width="24" height="30" rx="2" fill="#fdfcf9" transform="rotate(-8 74 71)"/><rect x="34" y="38" width="34" height="24" rx="4" fill="#fff"/><circle cx="45" cy="47" r="4" fill="#ff6a2b"/><circle cx="45" cy="47" r="1.6" fill="#fff"/></g></svg>
+</template>
+</body>
+</html>
